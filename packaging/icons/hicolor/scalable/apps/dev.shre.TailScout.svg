@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1e3a5f"/>
+      <stop offset="100%" stop-color="#0f2540"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0ea5e9"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#7dd3fc"/>
+      <stop offset="100%" stop-color="#38bdf8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Rounded square background -->
+  <rect width="128" height="128" rx="28" ry="28" fill="url(#bg)"/>
+
+  <!-- Mesh lines connecting the nodes — the tailnet -->
+  <g stroke="url(#accent)" stroke-width="2" stroke-opacity="0.35" fill="none">
+    <!-- Top to center -->
+    <line x1="64" y1="28" x2="64" y2="64"/>
+    <!-- Center to bottom-left -->
+    <line x1="64" y1="64" x2="36" y2="96"/>
+    <!-- Center to bottom-right -->
+    <line x1="64" y1="64" x2="92" y2="96"/>
+    <!-- Top to bottom-left -->
+    <line x1="64" y1="28" x2="36" y2="96"/>
+    <!-- Top to bottom-right -->
+    <line x1="64" y1="28" x2="92" y2="96"/>
+    <!-- Bottom-left to bottom-right -->
+    <line x1="36" y1="96" x2="92" y2="96"/>
+  </g>
+
+  <!-- Scout/search ring around center node -->
+  <circle cx="64" cy="64" r="16" fill="none" stroke="url(#glow)" stroke-width="2.5" stroke-opacity="0.5"/>
+  <circle cx="64" cy="64" r="22" fill="none" stroke="url(#glow)" stroke-width="1.2" stroke-opacity="0.2"/>
+
+  <!-- Nodes — three dots forming the tailnet triangle -->
+  <!-- Top node (this device) -->
+  <circle cx="64" cy="28" r="8" fill="url(#accent)"/>
+  <!-- Bottom-left peer -->
+  <circle cx="36" cy="96" r="6.5" fill="url(#accent)"/>
+  <!-- Bottom-right peer -->
+  <circle cx="92" cy="96" r="6.5" fill="url(#accent)"/>
+
+  <!-- Center node — the "scout" / active device, brighter and larger -->
+  <circle cx="64" cy="64" r="10" fill="url(#glow)"/>
+
+  <!-- Tiny inner highlight on center node -->
+  <circle cx="62" cy="61" r="3.5" fill="#fff" fill-opacity="0.35"/>
+</svg>

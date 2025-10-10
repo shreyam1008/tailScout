@@ -1,15 +1,15 @@
 [package]
-name = "taildesk"
+name = "tailscout"
 version = "0.1.0"
 edition = "2021"
 rust-version = "1.80"
 description = "A clean, native Rust GUI for Tailscale on Linux"
 license = "MIT"
-repository = "https://github.com/shre/taildesk"
-default-run = "taildesk"
+repository = "https://github.com/shreyam1008/tailScout"
+default-run = "tailscout"
 
 [[bin]]
-name = "taildesk"
+name = "tailscout"
 path = "src/main.rs"
 
 [dependencies]

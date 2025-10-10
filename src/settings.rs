@@ -48,7 +48,7 @@ fn settings_file() -> Option<PathBuf> {
     if let Some(config_home) = env::var_os("XDG_CONFIG_HOME").filter(|value| !value.is_empty()) {
         return Some(
             PathBuf::from(config_home)
-                .join("taildesk")
+                .join("tailscout")
                 .join(SETTINGS_FILE),
         );
     }
@@ -57,7 +57,7 @@ fn settings_file() -> Option<PathBuf> {
         .map(|home| {
             PathBuf::from(home)
                 .join(".config")
-                .join("taildesk")
+                .join("tailscout")
                 .join(SETTINGS_FILE)
         })
 }

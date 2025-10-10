@@ -620,7 +620,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "taildesk"
+name = "tailscout"
 version = "0.1.0"
 dependencies = [
  "gtk4",

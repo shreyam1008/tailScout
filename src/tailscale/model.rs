@@ -2,7 +2,7 @@
 //!
 //! These mirror the JSON produced by `tailscale status --json` (which is the
 //! same shape as the LocalAPI `/localapi/v0/status` response). Only the fields
-//! TailDesk needs are modeled; everything else is ignored. Every field is
+//! TailScout needs are modeled; everything else is ignored. Every field is
 //! tolerant of being absent so we never fail to parse a slightly different
 //! daemon version.
 

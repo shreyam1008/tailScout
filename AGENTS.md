@@ -1,6 +1,6 @@
-# TailDesk — Agent Rules
+# TailScout — Agent Rules
 
-Rules for AI coding agents and human contributors working on TailDesk.
+Rules for AI coding agents and human contributors working on TailScout.
 Read `README.md` for the project overview.
 
 ## What this is
@@ -15,7 +15,7 @@ matches or beats Trayscale, and grows as Tailscale adds features.
 - **Native look.** Use libadwaita widgets and patterns. Do not hand-roll custom chrome.
 - **Backend stays pure.** All Tailscale logic lives in `src/tailscale/` and must be
   unit-testable without a GUI. The `src/ui/` layer is a thin view.
-- **Version-aware.** TailDesk reads the daemon version at runtime. When Tailscale adds
+- **Version-aware.** TailScout reads the daemon version at runtime. When Tailscale adds
   features, extend the backend, bump the verified version in `CHANGELOG.md`.
 - **Edge cases first.** Daemon down, no peers, offline peers, missing CLI, permission
   denied — handle them explicitly and surface friendly messages.

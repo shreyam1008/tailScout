@@ -1,9 +1,9 @@
-//! Integration tests for TailDesk's pure backend: status parsing, the LocalAPI
+//! Integration tests for TailScout's pure backend: status parsing, the LocalAPI
 //! HTTP response reader, and presentation helpers. No GUI required.
 
-use taildesk::tailscale::localapi::parse_response;
-use taildesk::tailscale::model::{BackendState, Status};
-use taildesk::util::{human_bytes, os_label};
+use tailscout::tailscale::localapi::parse_response;
+use tailscout::tailscale::model::{BackendState, Status};
+use tailscout::util::{human_bytes, os_label};
 
 const SAMPLE_STATUS: &str = r#"
 {

@@ -10,7 +10,7 @@ pub use window::build_window;
 use gtk::gdk::Display;
 use gtk::CssProvider;
 
-/// Load TailDesk's custom CSS into the default display.
+/// Load TailScout's custom CSS into the default display.
 pub fn load_css() {
     let provider = CssProvider::new();
     provider.load_from_string(include_str!("style.css"));

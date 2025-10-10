@@ -1,4 +1,4 @@
-//! TailDesk library root.
+//! TailScout library root.
 //!
 //! The backend (`tailscale`, `util`) is pure and unit-testable. The `ui` and
 //! `app` modules are the libadwaita view layer. The binary (`main.rs`) is a

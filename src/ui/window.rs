@@ -1,4 +1,4 @@
-//! The main TailDesk window: status, connection controls, profiles, Taildrop,
+//! The main TailScout window: status, connection controls, profiles, Taildrop,
 //! exit-node basics, and the device list.
 //!
 //! All blocking backend calls run on a worker thread via `gio::spawn_blocking`
@@ -67,7 +67,7 @@ pub fn build_window(app: &adw::Application) -> adw::ApplicationWindow {
         .height_request(500)
         .build();
 
-    let title = adw::WindowTitle::new("TailDesk", "Small native Tailscale control");
+    let title = adw::WindowTitle::new("TailScout", "Small native Tailscale control");
     let current_settings = settings::load();
 
     let connect_button = gtk::Button::with_label("Connect");
@@ -315,7 +315,7 @@ fn refresh(ui: &Rc<Ui>) {
 
 fn setup_help_menu(ui: &Rc<Ui>) {
     let menu = gio::Menu::new();
-    menu.append(Some("TailDesk Guide"), Some("win.guide"));
+    menu.append(Some("TailScout Guide"), Some("win.guide"));
     menu.append(Some("CLI Cheatsheet"), Some("win.cheatsheet"));
     menu.append(Some("Run Netcheck"), Some("win.netcheck"));
     menu.append(Some("Exit Node CLI List"), Some("win.exit-node-list"));
@@ -323,7 +323,7 @@ fn setup_help_menu(ui: &Rc<Ui>) {
     menu.append(Some("Preferences"), Some("win.preferences"));
     menu.append(Some("Tailscale Version"), Some("win.version"));
     menu.append(Some("Bug Report ID"), Some("win.bugreport"));
-    menu.append(Some("About TailDesk"), Some("win.about"));
+    menu.append(Some("About TailScout"), Some("win.about"));
     ui.help_button.set_menu_model(Some(&menu));
 
     add_window_action(ui, "guide", show_guide);
@@ -739,8 +739,8 @@ fn show_advertise_exit_node_dialog(ui: &Rc<Ui>) {
 
 fn setup_operator(ui: &Rc<Ui>) {
     let dialog = adw::AlertDialog::new(
-        Some("Allow TailDesk to control Tailscale?"),
-        Some("Tailscale requires either root or an operator user for actions like connect/disconnect. TailDesk will open the system password prompt once and run: tailscale set --operator=$USER"),
+        Some("Allow TailScout to control Tailscale?"),
+        Some("Tailscale requires either root or an operator user for actions like connect/disconnect. TailScout will open the system password prompt once and run: tailscale set --operator=$USER"),
     );
     dialog.add_response("cancel", "Cancel");
     dialog.add_response("setup", "Open Password Prompt");
@@ -803,7 +803,7 @@ fn show_accounts_error_dialog(ui: &Rc<Ui>, detail: &str) {
     let dialog = adw::AlertDialog::new(
         Some("Accounts unavailable"),
         Some(&format!(
-            "TailDesk could not read saved Tailscale profiles, but you can still login/logout.\n\n{detail}"
+            "TailScout could not read saved Tailscale profiles, but you can still login/logout.\n\n{detail}"
         )),
     );
     dialog.add_response("close", "Close");
@@ -1181,12 +1181,12 @@ fn handle_action_error(ui: &Rc<Ui>, err: &TailscaleError) {
 fn show_permission_dialog(ui: &Rc<Ui>, detail: &str) {
     show_error(
         ui,
-        "Permission needed. TailDesk can open the system password prompt to fix operator access.",
+        "Permission needed. TailScout can open the system password prompt to fix operator access.",
     );
     let dialog = adw::AlertDialog::new(
         Some("Permission needed"),
         Some(&format!(
-            "Tailscale refused this command because this Linux user is not allowed to operate tailscaled.\n\nTailDesk can fix it by running this through Polkit:\n\npkexec tailscale set --operator=$USER\n\nOriginal error:\n{detail}"
+            "Tailscale refused this command because this Linux user is not allowed to operate tailscaled.\n\nTailScout can fix it by running this through Polkit:\n\npkexec tailscale set --operator=$USER\n\nOriginal error:\n{detail}"
         )),
     );
     dialog.add_response("cancel", "Cancel");
@@ -1231,7 +1231,7 @@ fn show_login_output(ui: &Rc<Ui>, output: &str) {
 }
 
 fn show_guide(ui: &Rc<Ui>) {
-    dialogs::show_copyable(&ui.window, "TailDesk Guide", GUIDE);
+    dialogs::show_copyable(&ui.window, "TailScout Guide", GUIDE);
 }
 
 fn show_cli_cheatsheet(ui: &Rc<Ui>) {
@@ -1240,13 +1240,13 @@ fn show_cli_cheatsheet(ui: &Rc<Ui>) {
 
 fn show_about(ui: &Rc<Ui>) {
     let dialog = adw::AboutDialog::builder()
-        .application_name("TailDesk")
-        .application_icon("network-vpn-symbolic")
-        .developer_name("Shreyam1008")
+        .application_name("TailScout")
+        .application_icon("dev.shre.TailScout")
+        .developer_name("Shreyam Adhikari")
         .version("0.1.0")
         .website("https://shreyam1008.com.np")
-        .issue_url("https://github.com/shreyam1008")
-        .copyright("Made by shreyam1008")
+        .issue_url("https://github.com/shreyam1008/tailScout/issues")
+        .copyright("© 2026 Shreyam Adhikari — MIT License")
         .comments("Native Rust + GTK4/libadwaita GUI for Tailscale on Linux.")
         .build();
     dialog.present(Some(&ui.window));

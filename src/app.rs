@@ -4,9 +4,9 @@ use adw::prelude::*;
 use gtk::glib;
 
 /// Reverse-DNS application identifier (used for D-Bus, icons, settings).
-const APP_ID: &str = "dev.shre.TailDesk";
+const APP_ID: &str = "dev.shre.TailScout";
 
-/// Build and run the TailDesk application. Returns the process exit code.
+/// Build and run the TailScout application. Returns the process exit code.
 pub fn run() -> glib::ExitCode {
     let app = adw::Application::builder().application_id(APP_ID).build();
 

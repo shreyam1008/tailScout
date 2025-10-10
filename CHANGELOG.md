@@ -1,17 +1,17 @@
 # Changelog
 
-All notable changes to TailDesk are documented here.
+All notable changes to TailScout are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-We also track the **Tailscale version** TailDesk is verified against, since the
+We also track the **Tailscale version** TailScout is verified against, since the
 backend wraps the `tailscale` CLI and LocalAPI, which evolve over time.
 
 ## [Unreleased]
 
 ### Added
-- Operator setup action using the native Polkit password prompt (`pkexec tailscale set --operator=$USER`) so TailDesk does not store or ask for sudo passwords.
+- Operator setup action using the native Polkit password prompt (`pkexec tailscale set --operator=$USER`) so TailScout does not store or ask for sudo passwords.
 - Tailnet/account overview showing current tailnet, MagicDNS state, signed-in owner, Tailscale version, and daemon health messages.
 - Account/tailnet dialog backed by `tailscale switch --list --json`, with profile switching.
 - Login/logout actions for managing Tailscale accounts from the accounts dialog.
@@ -19,9 +19,12 @@ backend wraps the `tailscale` CLI and LocalAPI, which evolve over time.
 - Exit-node section explaining what exit nodes do, listing available exit-node peers, and supporting use/clear actions.
 - Exit-node advertising action for offering this device as an exit node.
 - Default Taildrop receive-folder preference stored in XDG config without adding dependencies.
-- Help menu with TailDesk guide, Tailscale CLI cheatsheet, netcheck, admin console, version, bugreport, and About dialog.
+- Help menu with TailScout guide, Tailscale CLI cheatsheet, netcheck, admin console, version, bugreport, and About dialog.
 - Copyable command output/error/device-detail dialogs.
 - Richer device details: owner, allowed IPs, endpoint, DERP relay, last seen/handshake, key expiry, Taildrop availability, subnet router state, and traffic counters.
+- GitHub Actions CI/release workflow for formatting, tests, clippy, build, tagged release packaging, checksums, and GitHub Release uploads.
+- Release packaging and installer scripts for `tailscout-linux-x86_64.tar.gz`.
+- Desktop launcher metadata for packaged installs.
 
 ### Changed
 - `tailscale up` now uses a bounded timeout so the GUI does not wait forever.
@@ -31,6 +34,7 @@ backend wraps the `tailscale` CLI and LocalAPI, which evolve over time.
 - Permission errors now open a repair dialog that can launch the Polkit operator setup.
 - Permission and account errors now expose login, admin console, copy command, and copyable details flows.
 - UI help text and reusable dialogs moved into `src/ui/help.rs` and `src/ui/dialogs.rs` to keep the view layer easier to maintain.
+- README now documents the release binary path, one-line installer, CI release flow, and future package-manager plans.
 
 ### Fixed
 - Status parsing now tolerates `null` fields from `tailscale status --json` / LocalAPI, including `Health`, peers, users, IP lists, and scalar values.

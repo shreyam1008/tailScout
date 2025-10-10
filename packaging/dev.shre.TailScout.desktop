@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=TailScout
+Comment=Native Tailscale GUI
+Exec=tailscout
+Icon=dev.shre.TailScout
+Terminal=false
+Categories=Network;GTK;
+StartupNotify=true
