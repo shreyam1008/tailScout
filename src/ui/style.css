@@ -1,0 +1,45 @@
+/* TailDesk custom styling — kept minimal; libadwaita does the heavy lifting. */
+
+.online {
+  color: @success_color;
+}
+
+.offline {
+  color: @dim_label_color;
+  opacity: 0.7;
+}
+
+.status-pill {
+  font-weight: bold;
+  padding: 2px 10px;
+  border-radius: 999px;
+}
+
+.status-pill.online {
+  background-color: alpha(@success_color, 0.15);
+  color: @success_color;
+}
+
+.status-pill.offline {
+  background-color: alpha(@dim_label_color, 0.12);
+}
+
+.main-grid {
+  margin: 24px;
+}
+
+.main-column {
+  min-width: 340px;
+}
+
+.side-column {
+  min-width: 360px;
+}
+
+.copyable-output {
+  padding: 12px;
+}
+
+.device-empty {
+  padding: 24px;
+}
