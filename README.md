@@ -26,8 +26,9 @@ Install the latest GitHub Release:
 curl -fsSL https://raw.githubusercontent.com/shreyam1008/tailScout/main/scripts/install.sh | bash
 ```
 
-The installer downloads the latest `tailscout-linux-x86_64.tar.gz` release asset and
-installs:
+The installer downloads the latest `tailscout-linux-x86_64.tar.gz` release asset,
+detects existing installs, upgrades old versions automatically, refreshes launcher
+metadata, and installs:
 
 - **Binary:** `/usr/local/bin/tailscout`
 - **Desktop launcher:** `/usr/local/share/applications/dev.shre.TailScout.desktop`

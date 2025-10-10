@@ -18,6 +18,8 @@ backend wraps the `tailscale` CLI and LocalAPI, which evolve over time.
 - Improved device-detail popover spacing and key/value styling.
 - Clarified Taildrop policy wording for sends that depend on Tailscale file-sharing rules.
 - Replaced the app icon with a cleaner black-and-white TailScout mark inspired by Tailscale node geometry.
+- Improved the one-line installer with install/upgrade detection, clearer status output, launcher/icon refresh, runtime checks, and recorded installed version metadata.
+- Added a lightweight Tailwind-based GitHub Pages landing page with SEO metadata, schema, sitemap, robots, manifest, and LLM discovery files.
 
 ### Fixed
 - Prevented duplicate file chooser windows and reset file chooser state on cancel/success to avoid the UI feeling stuck.

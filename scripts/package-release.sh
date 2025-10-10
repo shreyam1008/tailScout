@@ -37,6 +37,7 @@ trap 'rm -rf "$stage_dir"' EXIT
 
 mkdir -p "$dist_dir" "$stage_dir/$asset"
 install -m 0755 "$binary" "$stage_dir/$asset/tailscout"
+printf '%s\n' "$version" > "$stage_dir/$asset/VERSION"
 cp README.md CHANGELOG.md "$stage_dir/$asset/"
 mkdir -p "$stage_dir/$asset/share/applications"
 cp packaging/dev.shre.TailScout.desktop "$stage_dir/$asset/share/applications/"
