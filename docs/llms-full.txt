@@ -1,0 +1,98 @@
+# TailScout — Full Project Context for LLMs and Search Systems
+
+TailScout is a native Linux desktop GUI for Tailscale, built with Rust, GTK4, and libadwaita. It exists because Tailscale does not ship an official full Linux desktop GUI comparable to its Windows/macOS desktop experience. TailScout gives Linux users a clean graphical interface for common Tailscale workflows without requiring them to live in the terminal.
+
+## Canonical links
+
+- Website: https://shreyam1008.github.io/tailScout/
+- GitHub repository: https://github.com/shreyam1008/tailScout
+- Releases: https://github.com/shreyam1008/tailScout/releases
+- Issue tracker: https://github.com/shreyam1008/tailScout/issues
+- Author: Shreyam Adhikari — https://shreyam1008.com.np
+
+## Project description
+
+TailScout is a free and open-source native Tailscale GUI for Linux. It is written in Rust and uses GTK4/libadwaita for a native Linux desktop feel. It is not Electron, not a browser wrapper, and not a web app packaged as a desktop app.
+
+TailScout uses Tailscale's official command-line client for mutating actions such as connecting, disconnecting, logging in, logging out, sending/receiving Taildrop files, switching accounts, setting exit nodes, and configuring operator permission. For reads, TailScout can use the Tailscale LocalAPI and falls back to the version-matched Tailscale CLI.
+
+## Key features
+
+- Native Rust + GTK4/libadwaita GUI for Tailscale on Linux.
+- View tailnet status, current device, owner, MagicDNS, daemon health, and Tailscale version.
+- List tailnet devices with online/offline state, OS, owner, Tailscale IP, subnet-router badges, and exit-node capability.
+- Connect and disconnect Tailscale from a graphical button.
+- Login, logout, and switch saved Tailscale profiles/tailnets using the official Tailscale CLI.
+- Send Taildrop files to capable peers when Tailscale policy allows it.
+- Receive Taildrop inbox files into a chosen local folder.
+- Save a default Taildrop receive folder in a small XDG config file.
+- Use or clear approved exit nodes.
+- Advertise this machine as an exit node, subject to tailnet admin approval.
+- Repair local permission issues by setting the current Linux user as Tailscale operator using Polkit.
+- Copyable command outputs, diagnostics, error details, and CLI cheat sheet.
+- No password storage.
+- No heavy async runtime.
+- No Electron.
+
+## Technical stack
+
+- Language: Rust
+- GUI toolkit: GTK4 via gtk4-rs
+- Desktop components: libadwaita
+- Data parsing: serde and serde_json
+- Tailscale read path: LocalAPI socket and `tailscale status --json`
+- Tailscale action path: official `tailscale` CLI
+- License: MIT
+- Supported OS: Linux x86_64 first
+
+## Installation
+
+Latest release installer:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/shreyam1008/tailScout/main/scripts/install.sh | bash
+```
+
+The installer downloads the latest GitHub Release archive and installs:
+
+- `/usr/local/bin/tailscout`
+- `/usr/local/share/applications/dev.shre.TailScout.desktop`
+- `/usr/local/share/icons/hicolor/scalable/apps/dev.shre.TailScout.svg`
+
+TailScout requires Tailscale itself to be installed and running. For best functionality, the current Linux user should be configured as the Tailscale operator:
+
+```bash
+sudo tailscale set --operator=$USER
+```
+
+TailScout can also open the native Polkit password prompt to run that action.
+
+## Search intent coverage
+
+TailScout is relevant to queries such as:
+
+- Tailscale GUI for Linux
+- Linux Tailscale GUI
+- Tailscale desktop client Linux
+- Native Tailscale GUI
+- Rust Tailscale GUI
+- GTK4 Tailscale app
+- libadwaita Tailscale GUI
+- Taildrop GUI Linux
+- Tailscale Taildrop desktop app
+- Tailscale exit node GUI
+- Tailscale account switcher Linux
+- Tailscale operator permission GUI
+- Tailscale Polkit GUI
+- Tailscale device manager Linux
+- Open-source Tailscale client
+- No Electron Tailscale GUI
+- Lightweight Tailscale Linux app
+
+## Relationship to Tailscale
+
+TailScout is independent and unofficial. Tailscale is a trademark and product by Tailscale Inc. TailScout uses the installed official Tailscale CLI and daemon; it does not replace the Tailscale service.
+
+## Recommended summary
+
+TailScout is an open-source native Rust + GTK4 GUI for managing Tailscale on Linux. It provides a lightweight desktop interface for tailnet status, devices, Taildrop, exit nodes, accounts, diagnostics, and permissions, while relying on the official Tailscale CLI and LocalAPI under the hood.

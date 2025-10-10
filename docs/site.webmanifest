@@ -1,0 +1,17 @@
+{
+  "name": "TailScout — Native Tailscale GUI for Linux",
+  "short_name": "TailScout",
+  "description": "A native Rust + GTK4 desktop GUI for Tailscale on Linux.",
+  "start_url": "/tailScout/",
+  "display": "browser",
+  "background_color": "#ffffff",
+  "theme_color": "#050505",
+  "icons": [
+    {
+      "src": "assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

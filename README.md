@@ -118,6 +118,19 @@ Linux binary, packages it, publishes a GitHub Release, and uploads checksums.
 Package-manager installs (`.deb`, RPM, AUR, Flatpak, distro repos, app stores) are
 planned later. For now the supported install path is the GitHub Release installer above.
 
+## Website
+
+The lightweight landing page lives in [`docs/`](docs/). It is a static GitHub Pages
+site with no build step. The page uses Tailwind via CDN, a tiny local JavaScript
+file, and SEO/discovery files including `robots.txt`, `sitemap.xml`, `llms.txt`,
+`llms-full.txt`, and `site.webmanifest`.
+
+To publish it, enable GitHub Pages in the repository settings:
+
+- **Source:** Deploy from a branch
+- **Branch:** `main`
+- **Folder:** `/docs`
+
 ## Architecture
 
 - `src/tailscale/` — pure, unit-tested client + data models (CLI wrapper + LocalAPI socket reader)

@@ -10,35 +10,35 @@ backend wraps the `tailscale` CLI and LocalAPI, which evolve over time.
 
 ## [Unreleased]
 
-### Added
-- Operator setup action using the native Polkit password prompt (`pkexec tailscale set --operator=$USER`) so TailScout does not store or ask for sudo passwords.
-- Tailnet/account overview showing current tailnet, MagicDNS state, signed-in owner, Tailscale version, and daemon health messages.
-- Account/tailnet dialog backed by `tailscale switch --list --json`, with profile switching.
-- Login/logout actions for managing Tailscale accounts from the accounts dialog.
-- Taildrop receive action using `tailscale file get --conflict=rename`.
-- Exit-node section explaining what exit nodes do, listing available exit-node peers, and supporting use/clear actions.
-- Exit-node advertising action for offering this device as an exit node.
-- Default Taildrop receive-folder preference stored in XDG config without adding dependencies.
-- Help menu with TailScout guide, Tailscale CLI cheatsheet, netcheck, admin console, version, bugreport, and About dialog.
-- Copyable command output/error/device-detail dialogs.
-- Richer device details: owner, allowed IPs, endpoint, DERP relay, last seen/handshake, key expiry, Taildrop availability, subnet router state, and traffic counters.
-- GitHub Actions CI/release workflow for formatting, tests, clippy, build, tagged release packaging, checksums, and GitHub Release uploads.
-- Release packaging and installer scripts for `tailscout-linux-x86_64.tar.gz`.
-- Desktop launcher metadata for packaged installs.
+## [0.1.2] - 2026-06-10
 
 ### Changed
-- `tailscale up` now uses a bounded timeout so the GUI does not wait forever.
-- The main view is now a two-column layout: overview and Taildrop on the left, devices top-right, exit-node controls below devices.
-- `NeedsLogin` now makes the primary action `Log In` instead of trying a normal connect first.
-- Device rows now show owner names, subnet-router badges, exit-node capability, and only show Taildrop send buttons when Tailscale reports the peer can receive files.
-- Permission errors now open a repair dialog that can launch the Polkit operator setup.
-- Permission and account errors now expose login, admin console, copy command, and copyable details flows.
-- UI help text and reusable dialogs moved into `src/ui/help.rs` and `src/ui/dialogs.rs` to keep the view layer easier to maintain.
-- README now documents the release binary path, one-line installer, CI release flow, and future package-manager plans.
+- Moved Admin Console access into the main Overview section instead of the header bar.
+- Polished copyable output/error windows with clearer titles, larger layout, text padding, and a Copy All button with copied feedback.
+- Improved device-detail popover spacing and key/value styling.
+- Clarified Taildrop policy wording for sends that depend on Tailscale file-sharing rules.
+- Replaced the app icon with a cleaner black-and-white TailScout mark inspired by Tailscale node geometry.
 
 ### Fixed
-- Status parsing now tolerates `null` fields from `tailscale status --json` / LocalAPI, including `Health`, peers, users, IP lists, and scalar values.
-- Connect/disconnect no longer gets stuck with the spinner/busy state after the command finishes.
+- Prevented duplicate file chooser windows and reset file chooser state on cancel/success to avoid the UI feeling stuck.
+
+### Verified
+- Verified against **Tailscale 1.98.4** on Linux.
+- `cargo test`: 19 passing.
+- `cargo clippy --all-targets`: clean.
+
+## [0.1.1] - 2026-06-10
+
+### Changed
+- Replaced cramped device detail alerts with a scrollable key/value popover that dismisses when clicking outside.
+- Collapsed Overview into one clickable row, with full overview details available on demand.
+- Added direct Admin Console access.
+- Improved permission and account dialogs with clearer logged-in vs operator-permission wording.
+- Expanded operator permission commands with the real current username instead of a literal `$USER` placeholder.
+
+### Fixed
+- Hid Taildrop send actions for peers owned by a different Tailscale user when detectable.
+- Added friendly Taildrop error messaging for `cannot send files: peer is owned by a different user`.
 
 ### Verified
 - Verified against **Tailscale 1.98.4** on Linux.
@@ -52,12 +52,27 @@ Verified against **Tailscale 1.98.4**.
 ### Added
 - Initial native Rust + GTK4 + libadwaita GUI for Linux.
 - Tailscale backend module:
-  - Typed data models (`Status`, `Peer`, `Self`, `PeerStatus`).
-  - CLI wrapper for `status --json`, `up`, `down`, `file cp`.
-  - LocalAPI unix-socket client for `/localapi/v0/status`.
-- Main window listing tailnet devices with online status, OS, and IP.
-- Connect / disconnect toggle.
-- Per-device detail pane (IPs, DNS name, OS, online state).
-- Send files to online devices via Taildrop.
-- Live status refresh.
-- Unit tests for status JSON parsing and model edge cases.
+  - Typed data models for `tailscale status --json` / LocalAPI state.
+  - CLI wrappers for status, connect, disconnect, login/logout, Taildrop, profiles, exit nodes, diagnostics, and operator setup.
+  - LocalAPI unix-socket client for `/localapi/v0/status` reads.
+- Main two-column window with overview, devices, Taildrop, and exit-node controls.
+- Account/tailnet dialog backed by `tailscale switch --list --json`.
+- Taildrop send and receive actions.
+- Default Taildrop receive-folder preference stored in XDG config.
+- Help menu with TailScout guide, CLI cheatsheet, netcheck, admin console, version, bugreport, and About dialog.
+- GitHub Actions CI/release workflow, release packaging scripts, one-line installer, desktop launcher, and icon packaging.
+- MIT license and contributing guide.
+
+### Changed
+- Renamed the project from TailDesk to TailScout, including crate, binary, app ID, desktop file, icon, docs, scripts, and release assets.
+- `tailscale up` uses a bounded timeout so the GUI does not wait forever.
+- `NeedsLogin` makes the primary action `Log In` instead of trying a normal connect first.
+- Permission errors open a repair dialog that can launch the Polkit operator setup.
+
+### Fixed
+- Status parsing tolerates `null` fields from `tailscale status --json` / LocalAPI.
+- Connect/disconnect no longer gets stuck with the spinner/busy state after the command finishes.
+
+### Verified
+- `cargo test`: 19 passing.
+- `cargo clippy --all-targets`: clean.

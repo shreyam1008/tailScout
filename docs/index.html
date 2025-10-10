@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TailScout — Native Tailscale GUI for Linux | Rust GTK4 Desktop Client</title>
+  <meta name="description" content="TailScout is a free open-source native Tailscale GUI for Linux. A lightweight Rust + GTK4/libadwaita desktop client for Tailscale status, Taildrop, exit nodes, accounts, permissions, and device management without Electron.">
+  <meta name="keywords" content="TailScout, TailScout Linux, TailScout Tailscale, Tailscale GUI, Tailscale Linux GUI, Tailscale desktop app, Tailscale desktop client, Tailscale GTK, Tailscale Rust, GTK4 Tailscale, libadwaita Tailscale, Linux VPN GUI, WireGuard mesh VPN GUI, Taildrop Linux, Tailscale Taildrop GUI, Tailscale exit node GUI, native Linux app, Rust desktop app, GTK4 desktop app, open source Tailscale client, no Electron Linux app, lightweight Tailscale app, GNOME Tailscale GUI, KDE Tailscale GUI, XFCE Tailscale GUI, Sway Tailscale GUI, Hyprland Tailscale GUI, tailnet manager, Tailscale device manager, Tailscale account switcher, Tailscale operator permission, Polkit Tailscale">
+  <meta name="author" content="Shreyam Adhikari">
+  <meta name="creator" content="Shreyam Adhikari">
+  <meta name="publisher" content="Shreyam Adhikari">
+  <meta name="application-name" content="TailScout">
+  <meta name="theme-color" content="#050505">
+  <meta name="color-scheme" content="light">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <link rel="canonical" href="https://shreyam1008.github.io/tailScout/">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/app.js" as="script">
+  <meta property="og:site_name" content="TailScout">
+  <meta property="og:title" content="TailScout — Native Tailscale GUI for Linux">
+  <meta property="og:description" content="A free, open-source Rust + GTK4 desktop client for Tailscale on Linux. Lightweight, native, no Electron, no browser wrapper.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://shreyam1008.github.io/tailScout/">
+  <meta property="og:image" content="https://shreyam1008.github.io/tailScout/assets/og.svg">
+  <meta property="og:image:alt" content="TailScout native Tailscale GUI for Linux preview">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="TailScout — Native Tailscale GUI for Linux">
+  <meta name="twitter:description" content="Free open-source Rust + GTK4 GUI for Tailscale on Linux. Taildrop, exit nodes, devices, accounts, permissions, no Electron.">
+  <meta name="twitter:image" content="https://shreyam1008.github.io/tailScout/assets/og.svg">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'] },
+          boxShadow: {
+            soft: '0 18px 60px rgba(15, 23, 42, 0.10)',
+            deep: '0 34px 100px rgba(15, 23, 42, 0.18)'
+          },
+          animation: {
+            float: 'float 7s ease-in-out infinite',
+            glow: 'glow 5s ease-in-out infinite alternate'
+          },
+          keyframes: {
+            float: { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-12px)' } },
+            glow: { '0%': { opacity: '.45' }, '100%': { opacity: '.9' } }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .mesh-bg{background-image:radial-gradient(#0f172a 1px,transparent 1px);background-size:28px 28px}.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}.reveal.show{opacity:1;transform:none}.glass{background:rgba(255,255,255,.76);backdrop-filter:blur(18px)}.app-tilt{transform:perspective(1100px) rotateY(-7deg) rotateX(3deg)}@media(max-width:1024px){.app-tilt{transform:none}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}.reveal{opacity:1;transform:none}}
+  </style>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@graph":[{"@type":"WebSite","name":"TailScout","url":"https://shreyam1008.github.io/tailScout/","description":"Official landing page for TailScout, a native Tailscale GUI for Linux.","inLanguage":"en","publisher":{"@id":"#person"}},{"@type":"Person","@id":"#person","name":"Shreyam Adhikari","url":"https://shreyam1008.com.np","sameAs":["https://github.com/shreyam1008"]},{"@type":"SoftwareApplication","name":"TailScout","alternateName":["Tailscale GUI for Linux","Native Tailscale Linux Client","Rust GTK4 Tailscale GUI"],"description":"TailScout is a free, open-source native Rust + GTK4/libadwaita desktop GUI for Tailscale on Linux.","applicationCategory":"NetworkApplication","applicationSubCategory":"VPN client GUI","operatingSystem":"Linux","softwareVersion":"0.1.2","programmingLanguage":"Rust","runtimePlatform":"GTK4, libadwaita","license":"https://opensource.org/licenses/MIT","isAccessibleForFree":true,"url":"https://github.com/shreyam1008/tailScout","downloadUrl":"https://github.com/shreyam1008/tailScout/releases","codeRepository":"https://github.com/shreyam1008/tailScout","author":{"@id":"#person"},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"keywords":"Tailscale GUI, Linux Tailscale GUI, Rust GTK4, Taildrop, exit node, native Linux app, no Electron"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is TailScout an official Tailscale app?","acceptedAnswer":{"@type":"Answer","text":"No. TailScout is an independent open-source native Linux GUI that wraps the official Tailscale CLI and LocalAPI."}},{"@type":"Question","name":"Does TailScout use Electron?","acceptedAnswer":{"@type":"Answer","text":"No. TailScout is written in Rust and uses GTK4 with libadwaita. It does not bundle a browser engine."}},{"@type":"Question","name":"Can TailScout send Taildrop files to every visible peer?","acceptedAnswer":{"@type":"Answer","text":"Taildrop sending depends on Tailscale file-sharing policy and device ownership. TailScout shows available send actions when Tailscale reports the peer can receive files."}},{"@type":"Question","name":"How do I install TailScout on Linux?","acceptedAnswer":{"@type":"Answer","text":"Run the one-line installer from the GitHub Release: curl -fsSL https://raw.githubusercontent.com/shreyam1008/tailScout/main/scripts/install.sh | bash"}}]}]}
+  </script>
+</head>
+<body class="bg-white text-slate-950 antialiased selection:bg-black selection:text-white">
+  <a class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-black focus:px-4 focus:py-2 focus:text-white" href="#main">Skip to content</a>
+  <nav class="sticky top-0 z-50 border-b border-slate-200/80 glass">
+    <div class="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 sm:px-8">
+      <a href="#top" class="flex items-center gap-3 font-black tracking-tight" aria-label="TailScout home">
+        <img src="assets/icon.svg" alt="" class="h-10 w-10 rounded-2xl shadow-soft">
+        <span class="text-xl">TailScout</span>
+      </a>
+      <div class="hidden items-center gap-7 text-sm font-semibold text-slate-600 md:flex">
+        <a class="hover:text-black" href="#features">Features</a>
+        <a class="hover:text-black" href="#screenshots">Screenshots</a>
+        <a class="hover:text-black" href="#seo-keywords">Use cases</a>
+        <a class="hover:text-black" href="#install">Install</a>
+        <a class="rounded-full bg-black px-4 py-2 text-white shadow-soft hover:-translate-y-0.5 hover:shadow-deep" href="https://github.com/shreyam1008/tailScout">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <header id="top" class="relative overflow-hidden bg-gradient-to-b from-white via-slate-50 to-white">
+    <div class="absolute inset-0 mesh-bg opacity-[0.055]" aria-hidden="true"></div>
+    <div class="absolute -left-32 top-24 h-80 w-80 rounded-full bg-black/10 blur-3xl animate-glow" aria-hidden="true"></div>
+    <div class="absolute -right-32 top-10 h-96 w-96 rounded-full bg-slate-400/20 blur-3xl animate-glow" aria-hidden="true"></div>
+    <div class="relative mx-auto grid max-w-7xl items-center gap-14 px-5 py-20 sm:px-8 lg:grid-cols-[1.03fr_.97fr] lg:py-28">
+      <section class="reveal">
+        <p class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-4 py-2 text-sm font-bold text-slate-600 shadow-sm"><span class="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_0_6px_rgba(16,185,129,.15)]"></span> Native Tailscale GUI for Linux</p>
+        <h1 class="mt-7 max-w-4xl text-6xl font-black leading-[.88] tracking-[-0.08em] text-black sm:text-7xl lg:text-8xl">TailScout</h1>
+        <p class="mt-6 max-w-2xl text-xl leading-8 text-slate-600 sm:text-2xl">A clean, open-source Rust + GTK4/libadwaita desktop client for Tailscale on Linux. Manage your tailnet, Taildrop files, exit nodes, accounts, permissions, and devices without living in the terminal.</p>
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+          <a href="#install" class="inline-flex h-12 items-center justify-center rounded-full bg-black px-6 font-bold text-white shadow-deep transition hover:-translate-y-1">Install TailScout</a>
+          <a href="https://github.com/shreyam1008/tailScout" class="inline-flex h-12 items-center justify-center rounded-full border border-slate-300 bg-white px-6 font-bold text-black shadow-soft transition hover:-translate-y-1">View source</a>
+        </div>
+        <dl class="mt-9 grid max-w-2xl grid-cols-1 gap-3 sm:grid-cols-3">
+          <div class="rounded-3xl border border-slate-200 bg-white/80 p-5 shadow-sm"><dt class="text-2xl font-black">~600 KB</dt><dd class="text-sm text-slate-500">release binary</dd></div>
+          <div class="rounded-3xl border border-slate-200 bg-white/80 p-5 shadow-sm"><dt class="text-2xl font-black">No Electron</dt><dd class="text-sm text-slate-500">native GTK app</dd></div>
+          <div class="rounded-3xl border border-slate-200 bg-white/80 p-5 shadow-sm"><dt class="text-2xl font-black">MIT</dt><dd class="text-sm text-slate-500">free open source</dd></div>
+        </dl>
+      </section>
+      <section class="reveal app-tilt animate-float rounded-[2rem] bg-gradient-to-br from-white to-slate-200 p-3 shadow-deep" aria-label="TailScout app preview">
+        <div class="overflow-hidden rounded-[1.45rem] border border-slate-200 bg-slate-100">
+          <div class="flex h-12 items-center justify-between border-b border-slate-200 bg-white px-4"><div class="flex gap-2"><i class="h-3 w-3 rounded-full bg-slate-300"></i><i class="h-3 w-3 rounded-full bg-slate-300"></i><i class="h-3 w-3 rounded-full bg-slate-300"></i></div><b class="text-sm">TailScout</b><span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-black text-emerald-700">Connected</span></div>
+          <div class="grid min-h-[420px] gap-4 p-4 sm:grid-cols-[.88fr_1.12fr]">
+            <div class="rounded-3xl border border-slate-200 bg-white p-4"><h2 class="font-black">Overview</h2><p class="mt-1 text-sm text-slate-500">tail9e520a.ts.net</p><div class="mt-5 space-y-3 text-sm"><p class="flex justify-between rounded-2xl bg-slate-50 p-3"><span>Owner</span><b>Shreyam</b></p><p class="flex justify-between rounded-2xl bg-slate-50 p-3"><span>Health</span><b>OK</b></p><p class="flex justify-between rounded-2xl bg-slate-50 p-3"><span>Version</span><b>1.98.4</b></p></div></div>
+            <div class="rounded-3xl border border-slate-200 bg-white p-4"><h2 class="font-black">Devices</h2><div class="mt-4 divide-y divide-slate-100"><div class="flex items-center justify-between py-4"><div><b>dev-reg-svr-v11</b><p class="text-sm text-slate-500">Windows · 100.100.8.30</p></div><span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-black text-emerald-700">Online</span></div><div class="flex items-center justify-between py-4"><div><b>linux-workstation</b><p class="text-sm text-slate-500">Linux · exit node</p></div><span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">Exit</span></div><div class="flex items-center justify-between py-4"><div><b>phone</b><p class="text-sm text-slate-500">Android · offline</p></div><span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-500">Offline</span></div></div></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </header>
+
+  <main id="main">
+    <section id="features" class="py-24">
+      <div class="mx-auto max-w-7xl px-5 sm:px-8">
+        <div class="reveal mx-auto max-w-3xl text-center"><p class="font-black uppercase tracking-[.2em] text-slate-400">Why TailScout</p><h2 class="mt-3 text-4xl font-black tracking-[-0.06em] sm:text-6xl">Linux Tailscale, without the terminal.</h2><p class="mt-5 text-lg text-slate-600">TailScout keeps Tailscale’s powerful CLI and daemon model, but adds a native desktop interface for common workflows.</p></div>
+        <div class="mt-14 grid gap-5 md:grid-cols-3">
+          <article class="reveal rounded-[2rem] border border-slate-200 bg-white p-8 shadow-soft transition hover:-translate-y-1 hover:shadow-deep"><div class="mb-6 grid h-12 w-12 place-items-center rounded-2xl bg-black text-white">⚡</div><h3 class="text-2xl font-black tracking-tight">Native and lightweight</h3><p class="mt-3 text-slate-600">Rust binary, shared GTK runtime, no Chromium, no Electron, no bundled browser engine.</p></article>
+          <article class="reveal rounded-[2rem] border border-slate-200 bg-white p-8 shadow-soft transition hover:-translate-y-1 hover:shadow-deep"><div class="mb-6 grid h-12 w-12 place-items-center rounded-2xl bg-black text-white">▦</div><h3 class="text-2xl font-black tracking-tight">Desktop friendly</h3><p class="mt-3 text-slate-600">Built with GTK4 and libadwaita for GNOME, KDE Plasma, XFCE, Cinnamon, i3, Sway, Hyprland, and more.</p></article>
+          <article class="reveal rounded-[2rem] border border-slate-200 bg-white p-8 shadow-soft transition hover:-translate-y-1 hover:shadow-deep"><div class="mb-6 grid h-12 w-12 place-items-center rounded-2xl bg-black text-white">◎</div><h3 class="text-2xl font-black tracking-tight">Tailscale workflows</h3><p class="mt-3 text-slate-600">Connect, disconnect, Taildrop, exit nodes, profiles, diagnostics, permissions, and detailed device views.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="screenshots" class="bg-slate-50 py-24">
+      <div class="mx-auto max-w-7xl px-5 sm:px-8">
+        <div class="reveal mx-auto max-w-3xl text-center"><h2 class="text-4xl font-black tracking-[-0.06em] sm:text-6xl">Screenshot-ready layout.</h2><p class="mt-5 text-lg text-slate-600">Replace these placeholders with real screenshots later. The page already includes descriptive alt text and captions for search and accessibility.</p></div>
+        <div class="mt-14 grid gap-5 md:grid-cols-3">
+          <figure class="reveal overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-soft"><div role="img" aria-label="TailScout main window showing connected tailnet overview and devices" class="grid aspect-[4/3] place-items-center bg-gradient-to-br from-slate-950 to-slate-800 p-8 text-white"><div class="grid h-2/3 w-4/5 place-items-center rounded-3xl border border-white/20 bg-white/10 font-black text-white/75">Main Window</div></div><figcaption class="p-5 text-sm text-slate-600">Connected tailnet overview with live device status.</figcaption></figure>
+          <figure class="reveal overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-soft"><div role="img" aria-label="TailScout device details view with owner IPs routes and traffic" class="grid aspect-[4/3] place-items-center bg-gradient-to-br from-slate-950 to-slate-800 p-8 text-white"><div class="grid h-2/3 w-4/5 place-items-center rounded-3xl border border-white/20 bg-white/10 font-black text-white/75">Device Details</div></div><figcaption class="p-5 text-sm text-slate-600">Owner, IPs, routes, endpoint, relay, Taildrop, and traffic.</figcaption></figure>
+          <figure class="reveal overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-soft"><div role="img" aria-label="TailScout Taildrop and exit node controls" class="grid aspect-[4/3] place-items-center bg-gradient-to-br from-slate-950 to-slate-800 p-8 text-white"><div class="grid h-2/3 w-4/5 place-items-center rounded-3xl border border-white/20 bg-white/10 font-black text-white/75">Taildrop + Exit Nodes</div></div><figcaption class="p-5 text-sm text-slate-600">Receive files, send to capable peers, and choose exit nodes.</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section id="seo-keywords" class="py-24">
+      <div class="mx-auto max-w-7xl px-5 sm:px-8">
+        <div class="reveal mx-auto max-w-4xl text-center"><h2 class="text-4xl font-black tracking-[-0.06em] sm:text-6xl">Built for real Linux Tailscale use cases.</h2><p class="mt-5 text-lg text-slate-600">TailScout is for people searching for a Tailscale Linux GUI, a native Tailscale desktop client, Taildrop controls, exit node management, and a lightweight alternative to Electron apps.</p></div>
+        <div class="reveal mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div class="rounded-2xl border border-slate-200 p-4 font-bold">Tailscale GUI for Linux</div><div class="rounded-2xl border border-slate-200 p-4 font-bold">Native GTK4 VPN interface</div><div class="rounded-2xl border border-slate-200 p-4 font-bold">Taildrop send and receive</div><div class="rounded-2xl border border-slate-200 p-4 font-bold">Exit node selector</div><div class="rounded-2xl border border-slate-200 p-4 font-bold">Rust desktop application</div><div class="rounded-2xl border border-slate-200 p-4 font-bold">No Electron Tailscale app</div><div class="rounded-2xl border border-slate-200 p-4 font-bold">GNOME KDE XFCE compatible</div><div class="rounded-2xl border border-slate-200 p-4 font-bold">Open-source MIT license</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="install" class="bg-black py-24 text-white">
+      <div class="mx-auto max-w-7xl px-5 sm:px-8">
+        <div class="reveal mx-auto max-w-3xl text-center"><h2 class="text-4xl font-black tracking-[-0.06em] sm:text-6xl">Install in one command.</h2><p class="mt-5 text-lg text-zinc-400">Downloads the latest GitHub Release and installs the binary, desktop launcher, and icon.</p></div>
+        <div class="reveal mx-auto mt-12 max-w-5xl overflow-hidden rounded-[2rem] border border-white/15 bg-zinc-950 shadow-deep">
+          <div class="flex items-center justify-between border-b border-white/10 px-5 py-4 text-sm text-zinc-400"><span>Terminal</span><button class="copy rounded-full border border-white/15 bg-white/10 px-4 py-2 font-bold text-white" data-copy="curl -fsSL https://raw.githubusercontent.com/shreyam1008/tailScout/main/scripts/install.sh | bash">Copy</button></div>
+          <pre class="overflow-x-auto p-6 text-sm text-zinc-200"><code>curl -fsSL https://raw.githubusercontent.com/shreyam1008/tailScout/main/scripts/install.sh | bash</code></pre>
+        </div>
+        <div class="reveal mx-auto mt-6 grid max-w-5xl gap-4 md:grid-cols-3"><div class="rounded-3xl border border-white/10 bg-white/5 p-5">Installs <b>/usr/local/bin/tailscout</b></div><div class="rounded-3xl border border-white/10 bg-white/5 p-5">Adds searchable desktop launcher and icon</div><div class="rounded-3xl border border-white/10 bg-white/5 p-5">Uses sudo only when system paths require it</div></div>
+      </div>
+    </section>
+
+    <section id="faq" class="bg-slate-50 py-24">
+      <div class="mx-auto max-w-4xl px-5 sm:px-8">
+        <div class="reveal text-center"><h2 class="text-4xl font-black tracking-[-0.06em] sm:text-6xl">Questions people actually search.</h2></div>
+        <div class="mt-12 space-y-4">
+          <details class="reveal rounded-3xl border border-slate-200 bg-white p-6"><summary class="cursor-pointer font-black">Is TailScout official from Tailscale?</summary><p class="mt-3 text-slate-600">No. TailScout is an independent open-source Linux desktop GUI that wraps the official Tailscale CLI and LocalAPI.</p></details>
+          <details class="reveal rounded-3xl border border-slate-200 bg-white p-6"><summary class="cursor-pointer font-black">Is TailScout better than using sudo tailscale up?</summary><p class="mt-3 text-slate-600">TailScout avoids running the whole GUI as root. It can set your Linux user as the Tailscale operator once through Polkit, then normal actions work without sudo.</p></details>
+          <details class="reveal rounded-3xl border border-slate-200 bg-white p-6"><summary class="cursor-pointer font-black">Does Taildrop work for every peer?</summary><p class="mt-3 text-slate-600">Taildrop sending depends on Tailscale file-sharing policy and peer ownership. TailScout exposes sending when Tailscale reports the target can receive files.</p></details>
+          <details class="reveal rounded-3xl border border-slate-200 bg-white p-6"><summary class="cursor-pointer font-black">Why not use Electron?</summary><p class="mt-3 text-slate-600">TailScout is designed to be native and low-footprint. GTK4/libadwaita provides the desktop UI without shipping a browser engine.</p></details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-slate-200 py-10 text-slate-600">
+    <div class="mx-auto flex max-w-7xl flex-col gap-4 px-5 sm:px-8 md:flex-row md:items-center md:justify-between"><p>© 2026 Shreyam Adhikari · MIT License</p><div class="flex gap-5"><a class="hover:text-black" href="https://github.com/shreyam1008/tailScout">GitHub</a><a class="hover:text-black" href="llms.txt">llms.txt</a><a class="hover:text-black" href="sitemap.xml">Sitemap</a></div></div>
+  </footer>
+
+  <noscript><p class="p-4 text-center text-sm text-slate-600">TailScout's landing page works without JavaScript; scroll animations and copy feedback are disabled.</p></noscript>
+  <script src="assets/app.js" defer></script>
+</body>
+</html>

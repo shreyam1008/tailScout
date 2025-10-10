@@ -55,6 +55,7 @@ struct Ui {
     device_list: gtk::ListBox,
     running: Cell<bool>,
     busy: Cell<bool>,
+    file_dialog_open: Cell<bool>,
     backend_state: RefCell<BackendState>,
     last_status: RefCell<Option<Status>>,
     settings: RefCell<Settings>,
@@ -78,7 +79,7 @@ pub fn build_window(app: &adw::Application) -> adw::ApplicationWindow {
     let setup_button = gtk::Button::from_icon_name("system-lock-screen-symbolic");
     setup_button.set_tooltip_text(Some("Set current user as Tailscale operator"));
 
-    let admin_button = gtk::Button::from_icon_name("web-browser-symbolic");
+    let admin_button = gtk::Button::with_label("Open");
     admin_button.set_tooltip_text(Some("Open Tailscale admin console"));
 
     let receive_button = gtk::Button::from_icon_name("folder-download-symbolic");
@@ -103,7 +104,6 @@ pub fn build_window(app: &adw::Application) -> adw::ApplicationWindow {
     header.pack_end(&refresh_button);
     header.pack_end(&profiles_button);
     header.pack_end(&receive_button);
-    header.pack_end(&admin_button);
     header.pack_end(&setup_button);
     header.pack_end(&help_button);
     header.pack_end(&spinner);
@@ -129,11 +129,20 @@ pub fn build_window(app: &adw::Application) -> adw::ApplicationWindow {
     let overview_group = adw::PreferencesGroup::new();
     overview_group.set_title("Overview");
     overview_group.add(&self_row);
+    let admin_row = adw::ActionRow::builder()
+        .title("Admin Console")
+        .subtitle("Open Tailscale web settings, users, ACLs, and file-sharing policy")
+        .activatable(true)
+        .build();
+    let admin_icon = gtk::Image::from_icon_name("web-browser-symbolic");
+    admin_row.add_prefix(&admin_icon);
+    admin_row.add_suffix(&admin_button);
+    overview_group.add(&admin_row);
 
     let taildrop_group = adw::PreferencesGroup::new();
     taildrop_group.set_title("Taildrop");
     taildrop_group.set_description(Some(
-        "Transfer files between your devices without cloud storage.",
+        "Receive files locally. Sending depends on Tailscale Taildrop policy for the target device.",
     ));
 
     let taildrop_row = adw::ActionRow::builder()
@@ -253,6 +262,7 @@ pub fn build_window(app: &adw::Application) -> adw::ApplicationWindow {
         device_list,
         running: Cell::new(false),
         busy: Cell::new(false),
+        file_dialog_open: Cell::new(false),
         backend_state: RefCell::new(BackendState::NeedsLogin),
         last_status: RefCell::new(None),
         settings: RefCell::new(current_settings),
@@ -274,6 +284,10 @@ pub fn build_window(app: &adw::Application) -> adw::ApplicationWindow {
     {
         let ui = ui.clone();
         admin_button.connect_clicked(move |_| dialogs::open_uri(&ui.window, ADMIN_CONSOLE_URL));
+    }
+    {
+        let ui = ui.clone();
+        admin_row.connect_activated(move |_| dialogs::open_uri(&ui.window, ADMIN_CONSOLE_URL));
     }
     {
         let ui = ui.clone();
@@ -672,6 +686,7 @@ where
         .width_request(430)
         .build();
     let content = gtk::Box::new(gtk::Orientation::Vertical, 0);
+    content.add_css_class("detail-popover");
 
     let title = gtk::Label::new(Some(&node.display_name()));
     title.add_css_class("title-2");
@@ -777,6 +792,7 @@ fn detail_row(key: &str, value: &str) -> gtk::Box {
 
     let key_label = gtk::Label::new(Some(key));
     key_label.add_css_class("dim-label");
+    key_label.add_css_class("detail-key");
     key_label.set_xalign(0.0);
     key_label.set_width_chars(14);
     key_label.set_valign(gtk::Align::Start);
@@ -1165,6 +1181,9 @@ fn show_preferences(ui: &Rc<Ui>) {
 }
 
 fn pick_default_taildrop_directory(ui: &Rc<Ui>) {
+    if !begin_file_dialog(ui) {
+        return;
+    }
     let dialog = gtk::FileDialog::builder()
         .title("Choose default Taildrop receive folder")
         .modal(true)
@@ -1173,6 +1192,7 @@ fn pick_default_taildrop_directory(ui: &Rc<Ui>) {
     let ui = ui.clone();
     let window = ui.window.clone();
     dialog.select_folder(Some(&window), gio::Cancellable::NONE, move |result| {
+        end_file_dialog(&ui);
         let file = match result {
             Ok(file) => file,
             Err(_) => return,
@@ -1202,6 +1222,9 @@ fn clear_default_taildrop_directory(ui: &Rc<Ui>) {
 }
 
 fn pick_receive_directory(ui: &Rc<Ui>) {
+    if !begin_file_dialog(ui) {
+        return;
+    }
     let dialog = gtk::FileDialog::builder()
         .title("Receive Taildrop files into folder")
         .modal(true)
@@ -1210,6 +1233,7 @@ fn pick_receive_directory(ui: &Rc<Ui>) {
     let ui = ui.clone();
     let window = ui.window.clone();
     dialog.select_folder(Some(&window), gio::Cancellable::NONE, move |result| {
+        end_file_dialog(&ui);
         let file = match result {
             Ok(file) => file,
             Err(_) => return,
@@ -1231,6 +1255,9 @@ fn receive_files(ui: &Rc<Ui>, directory: PathBuf) {
 }
 
 fn pick_and_send(ui: &Rc<Ui>, target: String, device_name: String) {
+    if !begin_file_dialog(ui) {
+        return;
+    }
     let dialog = gtk::FileDialog::builder()
         .title(format!("Send files to {device_name}"))
         .modal(true)
@@ -1239,6 +1266,7 @@ fn pick_and_send(ui: &Rc<Ui>, target: String, device_name: String) {
     let ui = ui.clone();
     let window = ui.window.clone();
     dialog.open_multiple(Some(&window), gio::Cancellable::NONE, move |result| {
+        end_file_dialog(&ui);
         let model = match result {
             Ok(model) => model,
             Err(_) => return,
@@ -1259,6 +1287,19 @@ fn pick_and_send(ui: &Rc<Ui>, target: String, device_name: String) {
             send_files(&ui, paths, target.clone(), device_name.clone());
         }
     });
+}
+
+fn begin_file_dialog(ui: &Rc<Ui>) -> bool {
+    if ui.file_dialog_open.get() {
+        toast(ui, "A file chooser is already open");
+        return false;
+    }
+    ui.file_dialog_open.set(true);
+    true
+}
+
+fn end_file_dialog(ui: &Rc<Ui>) {
+    ui.file_dialog_open.set(false);
 }
 
 fn send_files(ui: &Rc<Ui>, paths: Vec<PathBuf>, target: String, device_name: String) {
@@ -1497,7 +1538,7 @@ fn show_about(ui: &Rc<Ui>) {
         .application_name("TailScout")
         .application_icon("dev.shre.TailScout")
         .developer_name("Shreyam Adhikari")
-        .version("0.1.0")
+        .version("0.1.2")
         .website("https://shreyam1008.com.np")
         .issue_url("https://github.com/shreyam1008/tailScout/issues")
         .copyright("© 2026 Shreyam Adhikari — MIT License")

@@ -43,3 +43,24 @@
 .device-empty {
   padding: 24px;
 }
+
+.detail-popover {
+  padding: 4px;
+}
+
+.detail-row {
+  border-radius: 8px;
+}
+
+.detail-key {
+  font-weight: 600;
+}
+
+.copyable-window {
+  background: @window_bg_color;
+}
+
+.copyable-output {
+  background: alpha(@view_bg_color, 0.92);
+  border-radius: 10px;
+}

@@ -1,5 +1,5 @@
 use adw::prelude::*;
-use gtk::gio;
+use gtk::{gio, glib};
 
 pub fn show_copyable<P>(parent: &P, title: &str, body: &str)
 where
@@ -9,13 +9,15 @@ where
         .title(title)
         .modal(true)
         .transient_for(parent)
-        .default_width(560)
-        .default_height(420)
+        .default_width(640)
+        .default_height(460)
         .build();
 
     let header = adw::HeaderBar::new();
-    let copy_button = gtk::Button::with_label("Copy");
+    header.set_title_widget(Some(&adw::WindowTitle::new(title, "Copyable output")));
+    let copy_button = gtk::Button::with_label("Copy All");
     copy_button.add_css_class("suggested-action");
+    copy_button.set_tooltip_text(Some("Copy all text to clipboard"));
     header.pack_end(&copy_button);
 
     let buffer = gtk::TextBuffer::new(None);
@@ -27,6 +29,10 @@ where
     text.set_monospace(true);
     text.set_wrap_mode(gtk::WrapMode::WordChar);
     text.add_css_class("copyable-output");
+    text.set_left_margin(14);
+    text.set_right_margin(14);
+    text.set_top_margin(14);
+    text.set_bottom_margin(14);
 
     let scrolled = gtk::ScrolledWindow::builder()
         .hscrollbar_policy(gtk::PolicyType::Automatic)
@@ -39,11 +45,18 @@ where
     let body_box = gtk::Box::new(gtk::Orientation::Vertical, 0);
     body_box.append(&header);
     body_box.append(&scrolled);
+    body_box.add_css_class("copyable-window");
     window.set_child(Some(&body_box));
 
     let body = body.to_string();
+    let copy_button_for_reset = copy_button.clone();
     copy_button.connect_clicked(move |button| {
         button.clipboard().set_text(&body);
+        button.set_label("Copied");
+        let copy_button_for_reset = copy_button_for_reset.clone();
+        glib::timeout_add_seconds_local_once(2, move || {
+            copy_button_for_reset.set_label("Copy All");
+        });
     });
 
     window.present();

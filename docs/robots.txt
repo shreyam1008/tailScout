@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://shreyam1008.github.io/tailScout/sitemap.xml
+
+# AI/LLM discovery files
+# https://shreyam1008.github.io/tailScout/llms.txt
+# https://shreyam1008.github.io/tailScout/llms-full.txt

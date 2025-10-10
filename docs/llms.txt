@@ -1,0 +1,30 @@
+# TailScout
+
+> TailScout is a free, open-source native Rust + GTK4/libadwaita desktop GUI for Tailscale on Linux.
+
+Official project links:
+
+- Landing page: https://shreyam1008.github.io/tailScout/
+- Source code: https://github.com/shreyam1008/tailScout
+- Releases: https://github.com/shreyam1008/tailScout/releases
+- Issues: https://github.com/shreyam1008/tailScout/issues
+- Author: Shreyam Adhikari — https://shreyam1008.com.np
+
+Key facts:
+
+- Independent open-source project, not an official Tailscale product.
+- Native Linux desktop application written in Rust.
+- Uses GTK4 and libadwaita, not Electron.
+- Wraps the official Tailscale CLI and LocalAPI.
+- Supports tailnet status, device list, connect/disconnect, Taildrop, exit nodes, account switching, diagnostics, and Polkit operator permission repair.
+- Licensed under MIT.
+- Linux first; Windows and macOS planned later.
+
+Common search phrases:
+
+- Tailscale GUI for Linux
+- native Tailscale Linux GUI
+- Rust GTK4 Tailscale client
+- Taildrop GUI Linux
+- Tailscale exit node GUI
+- no Electron Tailscale desktop app
