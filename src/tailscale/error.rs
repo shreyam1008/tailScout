@@ -57,6 +57,14 @@ impl TailscaleError {
         .iter()
         .any(|needle| message.contains(needle))
     }
+
+    pub fn is_taildrop_different_user_problem(&self) -> bool {
+        let Self::CommandFailed { message, .. } = self else {
+            return false;
+        };
+        let message = message.to_lowercase();
+        message.contains("cannot send files") && message.contains("different user")
+    }
 }
 
 impl From<std::io::Error> for TailscaleError {

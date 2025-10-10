@@ -39,13 +39,20 @@ pub fn build_row(node: &Node, status: &Status) -> (adw::ActionRow, Option<gtk::B
     icon.add_css_class(if node.online { "online" } else { "offline" });
     row.add_prefix(&icon);
 
-    let status = gtk::Label::new(Some(if node.online { "Online" } else { "Offline" }));
-    status.add_css_class("status-pill");
-    status.add_css_class(if node.online { "online" } else { "offline" });
-    status.set_valign(gtk::Align::Center);
-    row.add_suffix(&status);
+    let status_label = gtk::Label::new(Some(if node.online { "Online" } else { "Offline" }));
+    status_label.add_css_class("status-pill");
+    status_label.add_css_class(if node.online { "online" } else { "offline" });
+    status_label.set_valign(gtk::Align::Center);
+    row.add_suffix(&status_label);
 
-    let send_button = if node.can_receive_taildrop() {
+    let same_owner = status
+        .this_node
+        .as_ref()
+        .map(|this_node| {
+            this_node.user_id == 0 || node.user_id == 0 || this_node.user_id == node.user_id
+        })
+        .unwrap_or(true);
+    let send_button = if node.can_receive_taildrop() && same_owner {
         let button = gtk::Button::from_icon_name("document-send-symbolic");
         button.add_css_class("flat");
         button.set_valign(gtk::Align::Center);
@@ -53,7 +60,11 @@ pub fn build_row(node: &Node, status: &Status) -> (adw::ActionRow, Option<gtk::B
         row.add_suffix(&button);
         Some(button)
     } else {
-        if !node.no_file_sharing_reason.is_empty() {
+        if !same_owner {
+            row.set_subtitle(&glib::markup_escape_text(&format!(
+                "{subtitle} · Taildrop unavailable: different Tailscale user"
+            )));
+        } else if !node.no_file_sharing_reason.is_empty() {
             row.set_subtitle(&glib::markup_escape_text(&format!(
                 "{subtitle} · Taildrop unavailable: {}",
                 node.no_file_sharing_reason

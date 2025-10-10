@@ -5,6 +5,7 @@
 //! and update the UI back on the GTK main loop, so the window never freezes.
 
 use std::cell::{Cell, RefCell};
+use std::env;
 use std::path::PathBuf;
 use std::rc::Rc;
 
@@ -20,7 +21,6 @@ use crate::util::{human_bytes, os_label};
 const WINDOW_WIDTH: i32 = 920;
 const WINDOW_HEIGHT: i32 = 700;
 const ADMIN_CONSOLE_URL: &str = "https://login.tailscale.com/admin/machines";
-const MANUAL_OPERATOR_COMMAND: &str = "sudo tailscale set --operator=$USER";
 
 #[derive(Clone, Copy)]
 enum ConnectionAction {
@@ -38,6 +38,7 @@ struct Ui {
     refresh_button: gtk::Button,
     spinner: gtk::Spinner,
     setup_button: gtk::Button,
+    admin_button: gtk::Button,
     receive_button: gtk::Button,
     profiles_button: gtk::Button,
     help_button: gtk::MenuButton,
@@ -55,6 +56,7 @@ struct Ui {
     running: Cell<bool>,
     busy: Cell<bool>,
     backend_state: RefCell<BackendState>,
+    last_status: RefCell<Option<Status>>,
     settings: RefCell<Settings>,
 }
 
@@ -75,6 +77,9 @@ pub fn build_window(app: &adw::Application) -> adw::ApplicationWindow {
 
     let setup_button = gtk::Button::from_icon_name("system-lock-screen-symbolic");
     setup_button.set_tooltip_text(Some("Set current user as Tailscale operator"));
+
+    let admin_button = gtk::Button::from_icon_name("web-browser-symbolic");
+    admin_button.set_tooltip_text(Some("Open Tailscale admin console"));
 
     let receive_button = gtk::Button::from_icon_name("folder-download-symbolic");
     receive_button.set_tooltip_text(Some("Receive Taildrop files"));
@@ -98,6 +103,7 @@ pub fn build_window(app: &adw::Application) -> adw::ApplicationWindow {
     header.pack_end(&refresh_button);
     header.pack_end(&profiles_button);
     header.pack_end(&receive_button);
+    header.pack_end(&admin_button);
     header.pack_end(&setup_button);
     header.pack_end(&help_button);
     header.pack_end(&spinner);
@@ -105,7 +111,11 @@ pub fn build_window(app: &adw::Application) -> adw::ApplicationWindow {
     let banner = adw::Banner::new("");
     banner.set_revealed(false);
 
-    let self_row = adw::ActionRow::builder().title("This device").build();
+    let self_row = adw::ActionRow::builder()
+        .title("Overview")
+        .subtitle("Connection, identity, and daemon state")
+        .activatable(true)
+        .build();
     let state_label = gtk::Label::new(Some("…"));
     state_label.add_css_class("status-pill");
     state_label.set_valign(gtk::Align::Center);
@@ -118,12 +128,7 @@ pub fn build_window(app: &adw::Application) -> adw::ApplicationWindow {
 
     let overview_group = adw::PreferencesGroup::new();
     overview_group.set_title("Overview");
-    overview_group.set_description(Some("Connection, identity, and daemon state."));
     overview_group.add(&self_row);
-    overview_group.add(&version_row);
-    overview_group.add(&tailnet_row);
-    overview_group.add(&user_row);
-    overview_group.add(&health_row);
 
     let taildrop_group = adw::PreferencesGroup::new();
     taildrop_group.set_title("Taildrop");
@@ -231,6 +236,7 @@ pub fn build_window(app: &adw::Application) -> adw::ApplicationWindow {
         refresh_button: refresh_button.clone(),
         spinner,
         setup_button: setup_button.clone(),
+        admin_button: admin_button.clone(),
         receive_button: receive_button.clone(),
         profiles_button: profiles_button.clone(),
         help_button: help_button.clone(),
@@ -248,6 +254,7 @@ pub fn build_window(app: &adw::Application) -> adw::ApplicationWindow {
         running: Cell::new(false),
         busy: Cell::new(false),
         backend_state: RefCell::new(BackendState::NeedsLogin),
+        last_status: RefCell::new(None),
         settings: RefCell::new(current_settings),
     });
     update_taildrop_folder_row(&ui);
@@ -263,6 +270,15 @@ pub fn build_window(app: &adw::Application) -> adw::ApplicationWindow {
     {
         let ui = ui.clone();
         setup_button.connect_clicked(move |_| setup_operator(&ui));
+    }
+    {
+        let ui = ui.clone();
+        admin_button.connect_clicked(move |_| dialogs::open_uri(&ui.window, ADMIN_CONSOLE_URL));
+    }
+    {
+        let ui = ui.clone();
+        let row = ui.self_row.clone();
+        row.connect_activated(move |_| show_overview(&ui));
     }
     {
         let ui = ui.clone();
@@ -394,6 +410,7 @@ fn toggle_connection(ui: &Rc<Ui>) {
 
 fn apply_status(ui: &Rc<Ui>, status: &Status) {
     ui.banner.set_revealed(false);
+    ui.last_status.replace(Some(status.clone()));
 
     let running = status.backend_state.is_running();
     ui.running.set(running);
@@ -538,7 +555,8 @@ fn build_device_row(ui: &Rc<Ui>, node: &Node, status: &Status) -> adw::ActionRow
         let ui = ui.clone();
         let node = node.clone();
         let status = status.clone();
-        row.connect_activated(move |_| show_device_details(&ui, &node, &status));
+        let row_for_details = row.clone();
+        row.connect_activated(move |_| show_device_details(&ui, &row_for_details, &node, &status));
     }
 
     if let (Some(button), Some(ip)) = (send_button, node.primary_ip()) {
@@ -551,104 +569,307 @@ fn build_device_row(ui: &Rc<Ui>, node: &Node, status: &Status) -> adw::ActionRow
     row
 }
 
-fn show_device_details(ui: &Rc<Ui>, node: &Node, status: &Status) {
+fn show_device_details<P>(ui: &Rc<Ui>, parent: &P, node: &Node, status: &Status)
+where
+    P: IsA<gtk::Widget>,
+{
     let mut body = String::new();
+    let mut rows: Vec<(String, String)> = Vec::new();
     if let Some(owner) = status.owner_label(node) {
-        body.push_str(&format!("Owner: {owner}\n"));
+        push_detail(&mut body, &mut rows, "Owner", owner);
     }
-    body.push_str(&format!("OS: {}\n", os_label(&node.os)));
-    body.push_str(&format!(
-        "Status: {}{}\n",
-        if node.online { "Online" } else { "Offline" },
-        if node.active { " · active" } else { "" }
-    ));
+    push_detail(&mut body, &mut rows, "OS", os_label(&node.os));
+    push_detail(
+        &mut body,
+        &mut rows,
+        "Status",
+        format!(
+            "{}{}",
+            if node.online { "Online" } else { "Offline" },
+            if node.active { " · active" } else { "" }
+        ),
+    );
     if !node.clean_dns_name().is_empty() {
-        body.push_str(&format!("DNS: {}\n", node.clean_dns_name()));
+        push_detail(&mut body, &mut rows, "DNS", node.clean_dns_name());
     }
     if node.tailscale_ips.is_empty() {
-        body.push_str("IPs: none\n");
+        push_detail(&mut body, &mut rows, "Tailscale IPs", "none");
     } else {
-        body.push_str(&format!(
-            "Tailscale IPs: {}\n",
-            node.tailscale_ips.join(", ")
-        ));
+        push_detail(
+            &mut body,
+            &mut rows,
+            "Tailscale IPs",
+            node.tailscale_ips.join(", "),
+        );
     }
     if !node.allowed_ips.is_empty() {
-        body.push_str(&format!("Allowed IPs: {}\n", node.allowed_ips.join(", ")));
+        push_detail(
+            &mut body,
+            &mut rows,
+            "Allowed IPs",
+            node.allowed_ips.join(", "),
+        );
     }
     if !node.cur_addr.is_empty() {
-        body.push_str(&format!("Current endpoint: {}\n", node.cur_addr));
+        push_detail(&mut body, &mut rows, "Endpoint", node.cur_addr.clone());
     }
     if !node.relay.is_empty() {
-        body.push_str(&format!("Relay: {}\n", node.relay));
+        push_detail(&mut body, &mut rows, "Relay", node.relay.clone());
     }
     if !node.last_seen.is_empty() {
-        body.push_str(&format!("Last seen: {}\n", node.last_seen));
+        push_detail(&mut body, &mut rows, "Last seen", node.last_seen.clone());
     }
     if !node.last_handshake.is_empty() {
-        body.push_str(&format!("Last handshake: {}\n", node.last_handshake));
+        push_detail(
+            &mut body,
+            &mut rows,
+            "Last handshake",
+            node.last_handshake.clone(),
+        );
     }
     if !node.key_expiry.is_empty() {
-        body.push_str(&format!("Key expiry: {}\n", node.key_expiry));
+        push_detail(&mut body, &mut rows, "Key expiry", node.key_expiry.clone());
     }
     if node.exit_node {
-        body.push_str("Exit node: currently selected\n");
+        push_detail(&mut body, &mut rows, "Exit node", "currently selected");
     } else if node.exit_node_option {
-        body.push_str("Exit node: available\n");
+        push_detail(&mut body, &mut rows, "Exit node", "available");
     }
     if node.is_subnet_router() {
-        body.push_str("Subnet router: yes\n");
+        push_detail(&mut body, &mut rows, "Subnet router", "yes");
     }
-    body.push_str(&format!(
-        "Taildrop: {}\n",
-        if node.can_receive_taildrop() {
-            "can receive files"
-        } else if node.no_file_sharing_reason.is_empty() {
-            "not available"
-        } else {
-            &node.no_file_sharing_reason
-        }
-    ));
-    body.push_str(&format!(
-        "Traffic: ↓ {}  ↑ {}",
-        human_bytes(node.rx_bytes),
-        human_bytes(node.tx_bytes)
-    ));
+    let same_owner = status
+        .this_node
+        .as_ref()
+        .map(|this_node| {
+            this_node.user_id == 0 || node.user_id == 0 || this_node.user_id == node.user_id
+        })
+        .unwrap_or(true);
+    let taildrop = if node.can_receive_taildrop() && same_owner {
+        "can receive files".to_string()
+    } else if !same_owner {
+        "not available: different Tailscale user".to_string()
+    } else if node.no_file_sharing_reason.is_empty() {
+        "not available".to_string()
+    } else {
+        node.no_file_sharing_reason.clone()
+    };
+    push_detail(&mut body, &mut rows, "Taildrop", taildrop);
+    push_detail(
+        &mut body,
+        &mut rows,
+        "Traffic",
+        format!(
+            "↓ {}  ↑ {}",
+            human_bytes(node.rx_bytes),
+            human_bytes(node.tx_bytes)
+        ),
+    );
 
-    let dialog = adw::AlertDialog::new(Some(&node.display_name()), Some(&body));
-    dialog.add_response("close", "Close");
-    dialog.add_response("copy", "Copy Details");
-    if node.exit_node_option {
-        dialog.add_response("use-exit", "Use as Exit Node");
-    }
-    if node.can_receive_taildrop() {
-        dialog.add_response("send", "Send Files");
-    }
-    dialog.set_default_response(Some("close"));
+    let popover = gtk::Popover::builder()
+        .autohide(true)
+        .has_arrow(true)
+        .width_request(430)
+        .build();
+    let content = gtk::Box::new(gtk::Orientation::Vertical, 0);
 
-    let ui_clone = ui.clone();
+    let title = gtk::Label::new(Some(&node.display_name()));
+    title.add_css_class("title-2");
+    title.set_wrap(true);
+    title.set_margin_top(16);
+    title.set_margin_bottom(8);
+    title.set_margin_start(16);
+    title.set_margin_end(16);
+    content.append(&title);
+
+    let scrolled_box = gtk::Box::new(gtk::Orientation::Vertical, 0);
+    for (key, value) in &rows {
+        scrolled_box.append(&detail_row(key, value));
+    }
+    let scrolled = gtk::ScrolledWindow::builder()
+        .hscrollbar_policy(gtk::PolicyType::Never)
+        .vscrollbar_policy(gtk::PolicyType::Automatic)
+        .max_content_height(360)
+        .child(&scrolled_box)
+        .build();
+    content.append(&scrolled);
+
+    let actions = gtk::Box::new(gtk::Orientation::Horizontal, 8);
+    actions.set_margin_top(12);
+    actions.set_margin_bottom(16);
+    actions.set_margin_start(16);
+    actions.set_margin_end(16);
+
+    let copy_button = gtk::Button::with_label("Copy Details");
+    copy_button.set_hexpand(true);
+    actions.append(&copy_button);
+    let send_button = if node.can_receive_taildrop() && same_owner {
+        let button = gtk::Button::with_label("Send Files");
+        button.add_css_class("suggested-action");
+        button.set_hexpand(true);
+        actions.append(&button);
+        Some(button)
+    } else {
+        None
+    };
+    let exit_button = if node.exit_node_option {
+        let button = gtk::Button::with_label("Use as Exit Node");
+        button.set_hexpand(true);
+        actions.append(&button);
+        Some(button)
+    } else {
+        None
+    };
+    content.append(&actions);
+    popover.set_child(Some(&content));
+
     let target = node.primary_ip().map(str::to_string);
     let name = node.display_name();
-    let details = body.clone();
-    dialog.connect_response(None, move |_, response| match response {
-        "copy" => {
-            ui_clone.window.clipboard().set_text(&details);
-            toast(&ui_clone, "Device details copied");
-        }
-        "send" => {
+    let ui_clone = ui.clone();
+    let details = body.trim().to_string();
+    copy_button.connect_clicked(move |_| {
+        ui_clone.window.clipboard().set_text(&details);
+        toast(&ui_clone, "Device details copied");
+    });
+
+    if let Some(button) = send_button {
+        let ui_clone = ui.clone();
+        let target = target.clone();
+        let name = name.clone();
+        button.connect_clicked(move |_| {
             if let Some(target) = &target {
                 pick_and_send(&ui_clone, target.clone(), name.clone());
             }
-        }
-        "use-exit" => {
+        });
+    }
+
+    if let Some(button) = exit_button {
+        let ui_clone = ui.clone();
+        let target = target.clone();
+        let name = name.clone();
+        button.connect_clicked(move |_| {
             if let Some(target) = &target {
                 set_exit_node(&ui_clone, target.clone(), name.clone());
             }
-        }
-        _ => {}
-    });
+        });
+    }
 
-    dialog.present(Some(&ui.window));
+    popover.set_parent(parent);
+    popover.popup();
+}
+
+fn push_detail<V>(body: &mut String, rows: &mut Vec<(String, String)>, key: &str, value: V)
+where
+    V: Into<String>,
+{
+    let value = value.into();
+    body.push_str(&format!("{key}: {value}\n"));
+    rows.push((key.to_string(), value));
+}
+
+fn detail_row(key: &str, value: &str) -> gtk::Box {
+    let row = gtk::Box::new(gtk::Orientation::Horizontal, 12);
+    row.add_css_class("detail-row");
+    row.set_margin_start(16);
+    row.set_margin_end(16);
+    row.set_margin_top(4);
+    row.set_margin_bottom(4);
+
+    let key_label = gtk::Label::new(Some(key));
+    key_label.add_css_class("dim-label");
+    key_label.set_xalign(0.0);
+    key_label.set_width_chars(14);
+    key_label.set_valign(gtk::Align::Start);
+
+    let value_label = gtk::Label::new(Some(value));
+    value_label.set_xalign(0.0);
+    value_label.set_wrap(true);
+    value_label.set_selectable(true);
+    value_label.set_hexpand(true);
+
+    row.append(&key_label);
+    row.append(&value_label);
+    row
+}
+
+fn show_overview(ui: &Rc<Ui>) {
+    let Some(status) = ui.last_status.borrow().clone() else {
+        show_error(ui, "Status has not loaded yet");
+        return;
+    };
+    let mut body = String::new();
+    let mut rows: Vec<(String, String)> = Vec::new();
+
+    push_detail(&mut body, &mut rows, "State", status.backend_state.label());
+    if let Some(node) = &status.this_node {
+        push_detail(&mut body, &mut rows, "Device", node.display_name());
+        if let Some(ip) = node.primary_ip() {
+            push_detail(&mut body, &mut rows, "Tailscale IP", ip);
+        }
+        if !node.clean_dns_name().is_empty() {
+            push_detail(&mut body, &mut rows, "DNS", node.clean_dns_name());
+        }
+        if let Some(owner) = status.owner_label(node) {
+            push_detail(&mut body, &mut rows, "Signed in as", owner);
+        }
+    }
+    if let Some(tailnet) = &status.current_tailnet {
+        if !tailnet.name.is_empty() {
+            push_detail(&mut body, &mut rows, "Tailnet", tailnet.name.clone());
+        }
+        if !tailnet.magic_dns_suffix.is_empty() {
+            push_detail(
+                &mut body,
+                &mut rows,
+                "MagicDNS",
+                tailnet.magic_dns_suffix.clone(),
+            );
+        }
+        push_detail(
+            &mut body,
+            &mut rows,
+            "MagicDNS enabled",
+            if tailnet.magic_dns_enabled {
+                "yes"
+            } else {
+                "no"
+            },
+        );
+    } else if !status.magic_dns_suffix.is_empty() {
+        push_detail(
+            &mut body,
+            &mut rows,
+            "MagicDNS",
+            status.magic_dns_suffix.clone(),
+        );
+    }
+    let version = if status.version.is_empty() {
+        status.client_version
+    } else {
+        status.version
+    };
+    push_detail(
+        &mut body,
+        &mut rows,
+        "Tailscale version",
+        if version.is_empty() {
+            "unknown".to_string()
+        } else {
+            version
+        },
+    );
+    push_detail(
+        &mut body,
+        &mut rows,
+        "Health",
+        if status.health.is_empty() {
+            "OK".to_string()
+        } else {
+            status.health.join("\n")
+        },
+    );
+
+    dialogs::show_copyable(&ui.window, "TailScout Overview", body.trim());
 }
 
 fn show_exit_node_dialog(ui: &Rc<Ui>) {
@@ -738,9 +959,12 @@ fn show_advertise_exit_node_dialog(ui: &Rc<Ui>) {
 }
 
 fn setup_operator(ui: &Rc<Ui>) {
+    let command = operator_command();
     let dialog = adw::AlertDialog::new(
         Some("Allow TailScout to control Tailscale?"),
-        Some("Tailscale requires either root or an operator user for actions like connect/disconnect. TailScout will open the system password prompt once and run: tailscale set --operator=$USER"),
+        Some(&format!(
+            "Tailscale actions need either root or operator permission. TailScout can open the system password prompt once and run:\n\npkexec {command}\n\nAfter this, connect/disconnect, account switching, exit nodes, and Taildrop actions should work without starting TailScout with sudo."
+        )),
     );
     dialog.add_response("cancel", "Cancel");
     dialog.add_response("setup", "Open Password Prompt");
@@ -803,7 +1027,7 @@ fn show_accounts_error_dialog(ui: &Rc<Ui>, detail: &str) {
     let dialog = adw::AlertDialog::new(
         Some("Accounts unavailable"),
         Some(&format!(
-            "TailScout could not read saved Tailscale profiles, but you can still login/logout.\n\n{detail}"
+            "TailScout is connected to Tailscale, but this Linux user is not allowed to read saved Tailscale profiles yet.\n\nClick Fix Permission to open the system password prompt once. You can still login or logout from here.\n\n{detail}"
         )),
     );
     dialog.add_response("close", "Close");
@@ -1067,12 +1291,29 @@ fn send_files(ui: &Rc<Ui>, paths: Vec<PathBuf>, target: String, device_name: Str
             Ok(errors) if errors.is_empty() => {
                 toast(&ui, &format!("Sent {count} file(s) to {device_name}"));
             }
-            Ok(errors) => {
-                show_copyable_error(&ui, "Some Taildrop files failed", &errors.join("\n"))
+            Ok(errors)
+                if errors
+                    .iter()
+                    .any(|error| is_taildrop_different_user_message(error)) =>
+            {
+                show_copyable_error(
+                    &ui,
+                    "Taildrop cannot send to this device",
+                    &format!(
+                        "Tailscale refused this Taildrop transfer because {device_name} is owned by a different Tailscale user.\n\nTaildrop send currently only works between devices owned by the same account/user. Send to one of your own devices, or use another file-transfer method for this peer.\n\nOriginal error:\n{}",
+                        errors.join("\n")
+                    ),
+                )
             }
+            Ok(errors) => show_copyable_error(&ui, "Some Taildrop files failed", &errors.join("\n")),
             Err(_) => show_copyable_error(&ui, "Send failed", "Background task error"),
         }
     });
+}
+
+fn is_taildrop_different_user_message(message: &str) -> bool {
+    let message = message.to_lowercase();
+    message.contains("cannot send files") && message.contains("different user")
 }
 
 fn run_action<F>(ui: &Rc<Ui>, success_message: String, action: F)
@@ -1139,6 +1380,7 @@ fn set_busy(ui: &Rc<Ui>, busy: bool) {
     ui.connect_button.set_sensitive(!busy);
     ui.setup_button.set_sensitive(!busy);
     ui.receive_button.set_sensitive(!busy);
+    ui.admin_button.set_sensitive(!busy);
     ui.profiles_button.set_sensitive(!busy);
     ui.help_button.set_sensitive(!busy);
 }
@@ -1173,12 +1415,21 @@ fn handle_backend_error(ui: &Rc<Ui>, err: &TailscaleError) {
 fn handle_action_error(ui: &Rc<Ui>, err: &TailscaleError) {
     if err.is_permission_problem() {
         show_permission_dialog(ui, &err.to_string());
+    } else if err.is_taildrop_different_user_problem() {
+        show_copyable_error(
+            ui,
+            "Taildrop cannot send to this device",
+            &format!(
+                "Tailscale refused this Taildrop transfer because the peer is owned by a different Tailscale user.\n\nTaildrop send currently only works between devices owned by the same account/user. Use another file-transfer method, or send to a device owned by your current Tailscale user.\n\nOriginal error:\n{err}"
+            ),
+        );
     } else {
         show_copyable_error(ui, "Tailscale command failed", &err.to_string());
     }
 }
 
 fn show_permission_dialog(ui: &Rc<Ui>, detail: &str) {
+    let command = operator_command();
     show_error(
         ui,
         "Permission needed. TailScout can open the system password prompt to fix operator access.",
@@ -1186,7 +1437,7 @@ fn show_permission_dialog(ui: &Rc<Ui>, detail: &str) {
     let dialog = adw::AlertDialog::new(
         Some("Permission needed"),
         Some(&format!(
-            "Tailscale refused this command because this Linux user is not allowed to operate tailscaled.\n\nTailScout can fix it by running this through Polkit:\n\npkexec tailscale set --operator=$USER\n\nOriginal error:\n{detail}"
+            "You are logged in to Tailscale, but this Linux user is not allowed to control tailscaled directly.\n\nClick Fix Permission to open the system password prompt and run:\n\npkexec {command}\n\nOr copy this command and run it manually with sudo:\n\nsudo {command}\n\nOriginal error:\n{detail}"
         )),
     );
     dialog.add_response("cancel", "Cancel");
@@ -1203,10 +1454,8 @@ fn show_permission_dialog(ui: &Rc<Ui>, detail: &str) {
     dialog.connect_response(None, move |_, response| match response {
         "setup" => setup_operator(&ui_for_response),
         "copy" => {
-            ui_for_response
-                .window
-                .clipboard()
-                .set_text(MANUAL_OPERATOR_COMMAND);
+            let command = format!("sudo {}", operator_command());
+            ui_for_response.window.clipboard().set_text(&command);
             toast(&ui_for_response, "Operator command copied");
         }
         "login" => login_account(&ui_for_response),
@@ -1215,6 +1464,11 @@ fn show_permission_dialog(ui: &Rc<Ui>, detail: &str) {
         _ => {}
     });
     dialog.present(Some(&ui.window));
+}
+
+fn operator_command() -> String {
+    let user = env::var("USER").unwrap_or_else(|_| "$USER".to_string());
+    format!("tailscale set --operator={user}")
 }
 
 fn show_copyable_error(ui: &Rc<Ui>, title: &str, body: &str) {
