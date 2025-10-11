@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>dev.shre.TailScout</id>
+  <name>TailScout</name>
+  <summary>Native Linux GUI for Tailscale</summary>
+  <developer id="io.github.shreyam1008">
+    <name>Shreyam Adhikari</name>
+  </developer>
+  <metadata_license>MIT</metadata_license>
+  <project_license>MIT</project_license>
+  <description>
+    <p>TailScout is a clean, native Rust desktop GUI for Tailscale on Linux, built with GTK4 and libadwaita. No Electron, no bundled browser — just a lightweight GNOME-style client that wraps the Tailscale CLI and LocalAPI.</p>
+    <p>Features:</p>
+    <ul>
+      <li>View and manage all tailnet devices</li>
+      <li>Connect, disconnect, and check connection status</li>
+      <li>Switch between Tailscale accounts and tailnets</li>
+      <li>Exit node selection and control</li>
+      <li>Taildrop send and receive</li>
+      <li>Device detail popovers with IPs, OS, tags, and last-seen time</li>
+      <li>Admin console shortcut</li>
+      <li>Native GTK4/libadwaita UI — matches GNOME style</li>
+    </ul>
+  </description>
+  <launchable type="desktop-id">dev.shre.TailScout.desktop</launchable>
+  <url type="homepage">https://shreyam1008.github.io/tailScout/</url>
+  <url type="bugtracker">https://github.com/shreyam1008/tailScout/issues</url>
+  <url type="vcs-browser">https://github.com/shreyam1008/tailScout</url>
+  <categories>
+    <category>Network</category>
+    <category>GTK</category>
+  </categories>
+  <keywords>
+    <keyword>tailscale</keyword>
+    <keyword>tailnet</keyword>
+    <keyword>vpn</keyword>
+    <keyword>network</keyword>
+    <keyword>wireguard</keyword>
+    <keyword>mesh</keyword>
+    <keyword>gnome</keyword>
+  </keywords>
+  <content_rating type="oars-1.1" />
+  <requires>
+    <control>keyboard</control>
+    <control>pointing</control>
+  </requires>
+  <recommends>
+    <display_length compare="ge">768</display_length>
+  </recommends>
+  <releases>
+    <release version="0.1.2" date="2026-06-10">
+      <description>
+        <p>Admin Console moved to Overview. Polished copyable output/error windows. Improved device-detail popover. Cleaner one-line installer.</p>
+      </description>
+    </release>
+    <release version="0.1.1" date="2026-06-10">
+      <description>
+        <p>Scrollable device-detail popover, Admin Console access, improved permission dialogs.</p>
+      </description>
+    </release>
+    <release version="0.1.0" date="2026-06-09">
+      <description>
+        <p>Initial release. Native GTK4 + libadwaita GUI for Tailscale. Device list, connect/disconnect, Taildrop, exit nodes, account switching.</p>
+      </description>
+    </release>
+  </releases>
+  <screenshots>
+    <screenshot type="default">
+      <caption>Main device list</caption>
+      <image>https://shreyam1008.github.io/tailScout/screenshot-1.png</image>
+    </screenshot>
+  </screenshots>
+</component>
