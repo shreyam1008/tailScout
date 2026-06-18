@@ -1,0 +1,5 @@
+.build/
+TailScout.app/
+*.xcuserstate
+*.xcworkspace
+*.xcodeproj

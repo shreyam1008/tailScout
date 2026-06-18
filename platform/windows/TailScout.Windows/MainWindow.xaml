@@ -1,0 +1,132 @@
+<Window
+    x:Class="TailScout.Windows.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:models="using:TailScout.Windows.Core.Models"
+    Title="TailScout">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid Margin="24" RowSpacing="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <CommandBar x:Name="RootCommandBar" DefaultLabelPosition="Right" IsOpen="False">
+                <AppBarButton Icon="Refresh" Label="Refresh" Click="Refresh_Click" />
+                <AppBarSeparator />
+                <AppBarButton Icon="Play" Label="Connect" Click="Connect_Click" />
+                <AppBarButton Icon="Stop" Label="Disconnect" Click="Disconnect_Click" />
+                <AppBarButton Icon="Contact" Label="Login" Click="Login_Click" />
+                <AppBarButton Icon="Cancel" Label="Logout" Click="Logout_Click" />
+            </CommandBar>
+
+            <InfoBar
+                x:Name="StatusInfo"
+                Grid.Row="1"
+                IsOpen="False"
+                IsClosable="True" />
+
+            <Grid Grid.Row="2" ColumnSpacing="24">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="360" />
+                </Grid.ColumnDefinitions>
+
+                <Grid RowSpacing="12">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="TailScout" Style="{StaticResource TitleTextBlockStyle}" />
+                        <TextBlock x:Name="StateText" Text="Not refreshed" Style="{StaticResource SubtitleTextBlockStyle}" />
+                        <TextBlock x:Name="TailnetText" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                        <TextBlock x:Name="SelfText" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                        <TextBlock x:Name="VersionText" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                        <TextBlock x:Name="HealthText" TextWrapping="Wrap" Foreground="{ThemeResource SystemFillColorCautionBrush}" />
+                    </StackPanel>
+
+                    <Grid Grid.Row="1" ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Devices" Style="{StaticResource BodyStrongTextBlockStyle}" VerticalAlignment="Center" />
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <ProgressRing x:Name="BusyRing" Width="20" Height="20" IsActive="False" Visibility="Collapsed" />
+                            <TextBlock x:Name="BusyText" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                        </StackPanel>
+                    </Grid>
+
+                    <ListView
+                        x:Name="DevicesList"
+                        Grid.Row="2"
+                        SelectionMode="Single"
+                        SelectionChanged="DevicesList_SelectionChanged">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="models:TailNode">
+                                <Grid Margin="12" ColumnSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}" Style="{StaticResource BodyStrongTextBlockStyle}" />
+                                    <TextBlock Grid.Column="1" Text="{x:Bind StatusLabel, Mode=OneWay}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                    <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{x:Bind DetailLine, Mode=OneWay}" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+
+                <ScrollViewer Grid.Column="1">
+                    <StackPanel x:Name="ActionsPanel" Spacing="18">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Account" Style="{StaticResource BodyStrongTextBlockStyle}" />
+                            <ComboBox x:Name="ProfilesCombo" PlaceholderText="No saved accounts" DisplayMemberPath="DisplayName" HorizontalAlignment="Stretch" />
+                            <Button Content="Switch" HorizontalAlignment="Stretch" Click="SwitchProfile_Click" />
+                        </StackPanel>
+
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Exit node" Style="{StaticResource BodyStrongTextBlockStyle}" />
+                            <ComboBox x:Name="ExitNodeCombo" PlaceholderText="No exit nodes" DisplayMemberPath="DisplayName" HorizontalAlignment="Stretch" />
+                            <Button Content="Use selected exit node" HorizontalAlignment="Stretch" Click="UseExitNode_Click" />
+                            <Button Content="Clear exit node" HorizontalAlignment="Stretch" Click="ClearExitNode_Click" />
+                            <ToggleSwitch x:Name="AdvertiseExitNodeToggle" Header="Advertise this device" Toggled="AdvertiseExitNode_Toggled" />
+                        </StackPanel>
+
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Taildrop" Style="{StaticResource BodyStrongTextBlockStyle}" />
+                            <TextBlock x:Name="SelectedDeviceText" Text="Choose a device" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            <Button Content="Send file" HorizontalAlignment="Stretch" Click="SendFile_Click" />
+                            <Button Content="Receive files" HorizontalAlignment="Stretch" Click="ReceiveFiles_Click" />
+                        </StackPanel>
+
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Diagnostics" Style="{StaticResource BodyStrongTextBlockStyle}" />
+                            <Button Content="Version" HorizontalAlignment="Stretch" Click="Version_Click" />
+                            <Button Content="Netcheck" HorizontalAlignment="Stretch" Click="Netcheck_Click" />
+                            <Button Content="Bugreport" HorizontalAlignment="Stretch" Click="Bugreport_Click" />
+                            <TextBox
+                                x:Name="DiagnosticsOutput"
+                                MinHeight="160"
+                                AcceptsReturn="True"
+                                IsReadOnly="True"
+                                TextWrapping="Wrap"
+                                PlaceholderText="Command output" />
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
