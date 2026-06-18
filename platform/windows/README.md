@@ -41,6 +41,27 @@ dotnet publish .\TailScout.Windows\TailScout.Windows.csproj `
 The GitHub release workflow zips that output as
 `tailscout-v<version>-windows-x64-winui.zip`.
 
+## Measure Working Set
+
+After building or publishing, run the Windows memory helper from PowerShell:
+
+```powershell
+cd platform\windows
+.\scripts\Measure-TailScoutWindowsMemory.ps1 `
+  -ExePath ..\..\dist\windows\TailScout\TailScout.Windows.exe `
+  -SettleSeconds 10 `
+  -Samples 10 `
+  -SampleIntervalMs 1000 `
+  -BaselineMiB 180
+```
+
+If `-ExePath` is omitted, the script looks for the published ZIP layout first,
+then the latest local `TailScout.Windows.exe` under `TailScout.Windows\bin`.
+It reports `PeakWorkingSet`, `WorkingSet`, and `PrivateMemory` in MiB. When
+`-BaselineMiB` is supplied, it exits nonzero if the selected metric exceeds the
+baseline; use `-BaselineMetric WorkingSet` or `-BaselineMetric PrivateMemory` to
+check a different metric.
+
 ## Project Layout
 
 - `TailScout.Windows.Core`: pure parser and CLI service library.

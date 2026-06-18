@@ -9,7 +9,8 @@ nodes, and send files over Taildrop — without living in the terminal.
 
 **Built native.** TailScout is written in Rust and uses GTK4 + libadwaita — the same
 toolkit GNOME itself uses. No Electron, no web views, no bundled browser engine.
-RAM usage is ~40–50 MB at runtime; that is the GTK4 framework floor, not bloat.
+Linux release builds are gated with a memory smoke test; current local idle usage
+is about 68 MiB PSS on Ubuntu GNOME. See [`docs/runtime-footprint.md`](docs/runtime-footprint.md).
 
 **Works across Linux desktops.** GTK4 runs natively on GNOME, KDE Plasma, XFCE,
 Cinnamon, MATE, Budgie, and tiling compositors (i3, Sway, Hyprland). That covers the

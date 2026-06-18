@@ -31,7 +31,10 @@ jobs:
             build-essential \
             pkg-config \
             libgtk-4-dev \
-            libadwaita-1-dev
+            libadwaita-1-dev \
+            dbus-x11 \
+            procps \
+            xvfb
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -52,6 +55,16 @@ jobs:
 
       - name: Build debug binary
         run: cargo build --locked
+
+      - name: Build release binary
+        run: cargo build --locked --release
+
+      - name: Run Linux memory smoke test
+        run: scripts/measure-memory.sh
+        env:
+          TAILSCOUT_MEMORY_LIMIT_MIB: "100"
+          TAILSCOUT_MEMORY_SAMPLES: "5"
+          TAILSCOUT_MEMORY_SETTLE_SECONDS: "5"
 
   rust-backend-cross:
     name: Rust backend on ${{ matrix.os }}
@@ -97,6 +110,28 @@ jobs:
         shell: pwsh
         run: dotnet build platform/windows/TailScout.Windows/TailScout.Windows.csproj -c Release -p:Platform=x64 --no-restore
 
+      - name: Publish WinUI app for memory smoke
+        shell: pwsh
+        run: |
+          dotnet publish platform/windows/TailScout.Windows/TailScout.Windows.csproj `
+            -c Release `
+            -r win-x64 `
+            --self-contained true `
+            -p:Platform=x64 `
+            -p:WindowsPackageType=None `
+            -p:WindowsAppSDKSelfContained=true `
+            -o dist/windows/TailScoutMemory
+
+      - name: Run WinUI memory smoke test
+        shell: pwsh
+        run: |
+          .\platform\windows\scripts\Measure-TailScoutWindowsMemory.ps1 `
+            -ExePath .\dist\windows\TailScoutMemory\TailScout.Windows.exe `
+            -SettleSeconds 5 `
+            -Samples 5 `
+            -SampleIntervalMs 1000 `
+            -BaselineMiB 180
+
   macos-native:
     name: macOS SwiftUI
     runs-on: macos-15
@@ -110,6 +145,10 @@ jobs:
 
       - name: Build Swift package
         run: swift build -c release
+        working-directory: platform/macos
+
+      - name: Run SwiftUI memory smoke test
+        run: Scripts/measure_rss.sh --build release --settle 5 --samples 5 --baseline-mib 120
         working-directory: platform/macos
 
   package-linux:

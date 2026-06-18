@@ -551,9 +551,10 @@ fn apply_exit_node_status(ui: &Rc<Ui>, status: &Status) {
 
 fn apply_device_list(ui: &Rc<Ui>, status: &Status) {
     let peers = status.sorted_peers();
+    let shared_status = Rc::new(status.clone());
     ui.device_list.remove_all();
     for node in &peers {
-        let row = build_device_row(ui, node, status);
+        let row = build_device_row(ui, node, Rc::clone(&shared_status));
         ui.device_list.append(&row);
     }
     let count = peers.len();
@@ -562,15 +563,17 @@ fn apply_device_list(ui: &Rc<Ui>, status: &Status) {
         .set_description(Some(&format!("{online} online · {count} total")));
 }
 
-fn build_device_row(ui: &Rc<Ui>, node: &Node, status: &Status) -> adw::ActionRow {
-    let (row, send_button) = device_row::build_row(node, status);
+fn build_device_row(ui: &Rc<Ui>, node: &Node, status: Rc<Status>) -> adw::ActionRow {
+    let (row, send_button) = device_row::build_row(node, status.as_ref());
 
     {
         let ui = ui.clone();
         let node = node.clone();
-        let status = status.clone();
+        let status = Rc::clone(&status);
         let row_for_details = row.clone();
-        row.connect_activated(move |_| show_device_details(&ui, &row_for_details, &node, &status));
+        row.connect_activated(move |_| {
+            show_device_details(&ui, &row_for_details, &node, status.as_ref())
+        });
     }
 
     if let (Some(button), Some(ip)) = (send_button, node.primary_ip()) {

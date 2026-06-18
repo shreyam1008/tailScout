@@ -10,6 +10,14 @@ backend wraps the `tailscale` CLI and LocalAPI, which evolve over time.
 
 ## [Unreleased]
 
+### Added
+- Added Linux, Windows, and macOS memory measurement helpers with configurable baseline failures.
+- Added CI memory smoke tests for the Linux GTK, Windows WinUI, and macOS SwiftUI clients.
+- Documented runtime footprint baselines and metric differences across platforms.
+
+### Changed
+- Reduced Linux device-list memory growth by sharing one status snapshot across row callbacks instead of cloning the full status for every row.
+
 ## [0.1.3] - 2026-06-18
 
 ### Added

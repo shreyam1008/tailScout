@@ -43,6 +43,23 @@ cd platform/macos
 Scripts/compile_and_run.sh --test
 ```
 
+Measure the packaged SwiftUI app's RSS after launch/settle:
+
+```bash
+cd platform/macos
+Scripts/measure_rss.sh --no-build --baseline-mib 120
+```
+
+To package first and then measure:
+
+```bash
+cd platform/macos
+Scripts/measure_rss.sh --build release --baseline-mib 120
+```
+
+The RSS helper samples the app process with built-in macOS tools and fails if
+the sampled peak RSS exceeds the configured baseline.
+
 The package script writes:
 
 - `.build/app/TailScout.app`
