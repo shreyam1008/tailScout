@@ -324,7 +324,8 @@ public sealed partial class MainWindow : Window
     {
         busy = isBusy;
         RootCommandBar.IsEnabled = !isBusy;
-        ActionsPanel.IsEnabled = !isBusy;
+        ActionsPanel.IsHitTestVisible = !isBusy;
+        ActionsPanel.Opacity = isBusy ? 0.6 : 1.0;
         BusyRing.IsActive = isBusy;
         BusyRing.Visibility = isBusy ? Visibility.Visible : Visibility.Collapsed;
         BusyText.Text = isBusy ? text : string.Empty;
