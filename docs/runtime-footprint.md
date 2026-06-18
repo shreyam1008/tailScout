@@ -20,9 +20,10 @@ the ceiling, investigate before raising it.
 
 | Platform | Metric | Current baseline | Notes |
 |---|---:|---:|---|
-| Linux GTK/libadwaita | PSS | 100 MiB | Measured locally at ~68 MiB PSS on Ubuntu GNOME |
+| Linux GTK/libadwaita desktop | PSS | 100 MiB | Measured locally at ~68 MiB PSS on Ubuntu GNOME |
+| Linux GTK/libadwaita CI headless | PSS | 260 MiB | GitHub `xvfb` runner measured ~225 MiB PSS because toolkit/graphics pages are not shared with a normal desktop session |
 | Windows WinUI 3 | Peak working set | 180 MiB | Local Windows validation required |
-| macOS SwiftUI | Peak RSS | 120 MiB | Local macOS validation required |
+| macOS SwiftUI | Peak RSS | 120 MiB | GitHub macOS runner measured ~83 MiB RSS |
 
 ## Commands
 
@@ -38,6 +39,7 @@ Windows:
 cd platform\windows
 .\scripts\Measure-TailScoutWindowsMemory.ps1 `
   -ExePath ..\..\dist\windows\TailScout\TailScout.Windows.exe `
+  -SkipStartupRefresh `
   -BaselineMiB 180
 ```
 

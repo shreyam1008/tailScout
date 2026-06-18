@@ -26,7 +26,14 @@ public sealed partial class MainWindow : Window
         ProfilesCombo.ItemsSource = profiles;
         ExitNodeCombo.ItemsSource = exitNodes;
 
-        _ = RefreshAsync();
+        if (IsStartupRefreshDisabled())
+        {
+            ShowInfo("Startup refresh skipped.", InfoBarSeverity.Informational);
+        }
+        else
+        {
+            _ = RefreshAsync();
+        }
     }
 
     private async void Refresh_Click(object sender, RoutedEventArgs e) => await RefreshAsync();
@@ -404,4 +411,12 @@ public sealed partial class MainWindow : Window
                 argumentException.Message,
             _ => exception.Message
         };
+
+    private static bool IsStartupRefreshDisabled()
+    {
+        var value = Environment.GetEnvironmentVariable("TAILSCOUT_SKIP_STARTUP_REFRESH");
+        return string.Equals(value, "1", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(value, "true", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(value, "yes", StringComparison.OrdinalIgnoreCase);
+    }
 }

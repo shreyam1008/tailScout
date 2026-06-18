@@ -62,7 +62,7 @@ jobs:
       - name: Run Linux memory smoke test
         run: scripts/measure-memory.sh
         env:
-          TAILSCOUT_MEMORY_LIMIT_MIB: "100"
+          TAILSCOUT_MEMORY_LIMIT_MIB: "260"
           TAILSCOUT_MEMORY_SAMPLES: "5"
           TAILSCOUT_MEMORY_SETTLE_SECONDS: "5"
 
@@ -130,6 +130,7 @@ jobs:
             -SettleSeconds 5 `
             -Samples 5 `
             -SampleIntervalMs 1000 `
+            -SkipStartupRefresh `
             -BaselineMiB 180
 
   macos-native:

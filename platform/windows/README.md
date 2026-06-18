@@ -52,6 +52,7 @@ cd platform\windows
   -SettleSeconds 10 `
   -Samples 10 `
   -SampleIntervalMs 1000 `
+  -SkipStartupRefresh `
   -BaselineMiB 180
 ```
 
@@ -61,6 +62,8 @@ It reports `PeakWorkingSet`, `WorkingSet`, and `PrivateMemory` in MiB. When
 `-BaselineMiB` is supplied, it exits nonzero if the selected metric exceeds the
 baseline; use `-BaselineMetric WorkingSet` or `-BaselineMetric PrivateMemory` to
 check a different metric.
+`-SkipStartupRefresh` measures the WinUI shell without requiring a running
+Tailscale daemon or `tailscale.exe` during the baseline run.
 
 ## Project Layout
 

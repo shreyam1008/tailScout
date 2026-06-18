@@ -21,6 +21,8 @@ param(
     [ValidateSet("PeakWorkingSet", "WorkingSet", "PrivateMemory")]
     [string]$BaselineMetric = "PeakWorkingSet",
 
+    [switch]$SkipStartupRefresh,
+
     [switch]$LeaveRunning,
 
     [switch]$Json
@@ -137,6 +139,7 @@ function Get-Maximum {
 $hasBaseline = $PSBoundParameters.ContainsKey("BaselineMiB")
 $process = $null
 $exitCode = 0
+$previousSkipStartupRefresh = [Environment]::GetEnvironmentVariable("TAILSCOUT_SKIP_STARTUP_REFRESH", "Process")
 
 try {
     if ($hasBaseline -and $BaselineMiB -le 0) {
@@ -148,6 +151,10 @@ try {
     if (-not $Json) {
         Write-Host "Launching TailScout.Windows.exe"
         Write-Host ("Executable: {0}" -f $resolvedExePath)
+    }
+
+    if ($SkipStartupRefresh) {
+        [Environment]::SetEnvironmentVariable("TAILSCOUT_SKIP_STARTUP_REFRESH", "1", "Process")
     }
 
     $startProcessArgs = @{
@@ -178,7 +185,9 @@ try {
             $liveProcess = [System.Diagnostics.Process]::GetProcessById($process.Id)
         }
         catch {
-            throw "TailScout.Windows.exe exited before sample $index could be collected."
+            $process.Refresh()
+            $processExit = if ($process.HasExited) { $process.ExitCode } else { "unknown" }
+            throw "TailScout.Windows.exe exited before sample $index could be collected. Exit code: $processExit"
         }
 
         $liveProcess.Refresh()
@@ -270,6 +279,10 @@ catch {
     $exitCode = 1
 }
 finally {
+    if ($SkipStartupRefresh) {
+        [Environment]::SetEnvironmentVariable("TAILSCOUT_SKIP_STARTUP_REFRESH", $previousSkipStartupRefresh, "Process")
+    }
+
     if ($null -ne $process -and -not $LeaveRunning) {
         try {
             if (-not $process.HasExited) {
