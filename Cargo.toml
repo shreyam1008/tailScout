@@ -13,10 +13,12 @@ name = "tailscout"
 path = "src/main.rs"
 
 [dependencies]
-gtk = { version = "0.9", package = "gtk4", features = ["v4_12"] }
-adw = { version = "0.7", package = "libadwaita", features = ["v1_5"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+gtk = { version = "0.9", package = "gtk4", features = ["v4_12"] }
+adw = { version = "0.7", package = "libadwaita", features = ["v1_5"] }
 
 [dev-dependencies]
 # Tests rely on the std library and serde_json only.

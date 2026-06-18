@@ -5,6 +5,7 @@
 
 pub mod cli;
 pub mod error;
+#[cfg(unix)]
 pub mod localapi;
 pub mod model;
 
@@ -16,9 +17,17 @@ use std::path::Path;
 /// Fetch the current status, preferring the fast LocalAPI socket and falling
 /// back to the CLI if the socket is unavailable or denied.
 pub fn fetch_status() -> Result<Status> {
-    match localapi::status() {
-        Ok(status) => Ok(status),
-        Err(_) => cli::status(),
+    #[cfg(unix)]
+    {
+        match localapi::status() {
+            Ok(status) => Ok(status),
+            Err(_) => cli::status(),
+        }
+    }
+
+    #[cfg(not(unix))]
+    {
+        cli::status()
     }
 }
 
