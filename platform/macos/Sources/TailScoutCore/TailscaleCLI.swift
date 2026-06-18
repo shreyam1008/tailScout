@@ -11,7 +11,7 @@ public enum TailscaleCLIError: LocalizedError, Sendable {
     public var errorDescription: String? {
         switch self {
         case .launchFailed(let message):
-            "Could not start tailscale: \(message)"
+            return "Could not start tailscale: \(message)"
         case .commandFailed(let arguments, let code, let message):
             let command = (["tailscale"] + arguments).joined(separator: " ")
             if message.isEmpty {
@@ -19,13 +19,13 @@ public enum TailscaleCLIError: LocalizedError, Sendable {
             }
             return "\(command) failed with exit code \(code):\n\(message)"
         case .invalidFile(let url):
-            "File does not exist: \(url.path)"
+            return "File does not exist: \(url.path)"
         case .foldersCannotBeSent(let url):
-            "Taildrop send expects a file, not a folder: \(url.path)"
+            return "Taildrop send expects a file, not a folder: \(url.path)"
         case .invalidDirectory(let url):
-            "Folder does not exist: \(url.path)"
+            return "Folder does not exist: \(url.path)"
         case .missingTarget(let device):
-            "No usable Tailscale address was found for \(device)."
+            return "No usable Tailscale address was found for \(device)."
         }
     }
 }
