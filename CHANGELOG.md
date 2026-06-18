@@ -10,6 +10,8 @@ backend wraps the `tailscale` CLI and LocalAPI, which evolve over time.
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-06-18
+
 ### Added
 - Added a first-pass native Windows WinUI 3 client under `platform/windows/`, with CLI-backed status, connect/disconnect, login/logout, profile switching, exit-node controls, Taildrop, diagnostics, and parser tests.
 - Added a first-pass native macOS SwiftUI client under `platform/macos/`, with SwiftPM packaging, CLI-backed workflows, and parsing tests.
