@@ -1,7 +1,7 @@
 //! Integration tests for TailScout's pure backend: status parsing, the LocalAPI
 //! HTTP response reader, and presentation helpers. No GUI required.
 
-#[cfg(unix)]
+#[cfg(target_os = "linux")]
 use tailscout::tailscale::localapi::parse_response;
 use tailscout::tailscale::model::{BackendState, Status};
 use tailscout::util::{human_bytes, os_label};
@@ -175,7 +175,7 @@ fn rejects_garbage_json() {
     assert!(Status::from_json("not json at all").is_err());
 }
 
-#[cfg(unix)]
+#[cfg(target_os = "linux")]
 #[test]
 fn localapi_parses_content_length_body() {
     let raw = b"HTTP/1.1 200 OK\r\nContent-Length: 17\r\n\r\n{\"Version\":\"1.0\"}";
@@ -183,7 +183,7 @@ fn localapi_parses_content_length_body() {
     assert_eq!(body, "{\"Version\":\"1.0\"}");
 }
 
-#[cfg(unix)]
+#[cfg(target_os = "linux")]
 #[test]
 fn localapi_parses_chunked_body() {
     // 0x11 = 17 bytes for the JSON payload.
@@ -192,14 +192,14 @@ fn localapi_parses_chunked_body() {
     assert_eq!(body, "{\"Version\":\"1.0\"}");
 }
 
-#[cfg(unix)]
+#[cfg(target_os = "linux")]
 #[test]
 fn localapi_rejects_non_2xx() {
     let raw = b"HTTP/1.1 403 Forbidden\r\nContent-Length: 7\r\n\r\ndenied!";
     assert!(parse_response(raw).is_err());
 }
 
-#[cfg(unix)]
+#[cfg(target_os = "linux")]
 #[test]
 fn localapi_status_round_trips_into_model() {
     // A chunked status body should parse and then deserialize into Status.

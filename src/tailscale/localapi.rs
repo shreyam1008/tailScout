@@ -17,10 +17,9 @@ use super::error::{Result, TailscaleError};
 use super::model::Status;
 
 /// Candidate socket paths, in order of preference, across distros.
-pub const SOCKET_PATHS: [&str; 3] = [
+pub const SOCKET_PATHS: [&str; 2] = [
     "/run/tailscale/tailscaled.sock",
     "/var/run/tailscale/tailscaled.sock",
-    "/var/run/tailscaled.socket",
 ];
 
 /// The LocalAPI requires a valid Host header; the daemon accepts this value.
