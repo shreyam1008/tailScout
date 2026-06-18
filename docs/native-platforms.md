@@ -67,4 +67,3 @@ basic native apps are validated on real Windows and macOS machines.
 | Taildrop send | CLI | CLI | CLI | Taildrop is alpha and same-owner limited. |
 | Taildrop receive | CLI + folder setting | CLI + picker | CLI + picker | macOS may also place received files in Downloads depending on client variant. |
 | Diagnostics | CLI | CLI | CLI | Version, netcheck, bugreport. |
-
