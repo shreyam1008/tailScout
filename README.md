@@ -1,6 +1,7 @@
 # TailScout
 
 A clean, **native Rust GUI for Tailscale** on Linux — built with GTK4 + libadwaita.
+Native Windows and macOS clients now live beside it as first-pass platform shells.
 
 No official Linux desktop client exists for Tailscale. TailScout fills that gap: a
 modern, low-footprint window to see your tailnet, connect/disconnect, manage exit
@@ -16,9 +17,10 @@ vast majority of Linux desktop users. On GNOME it looks perfectly at home. On KD
 others it renders its own Adwaita chrome — it won't match Breeze pixel-for-pixel, but
 it works correctly and KDE's `breeze-gtk` package helps it blend in.
 
-> Status: early (v0.1). Linux first. Windows and macOS planned.
+> Status: early (v0.1). Linux is the verified primary client. Windows WinUI 3
+> and macOS SwiftUI clients are in first-pass validation.
 
-## Quick install
+## Quick install (Linux)
 
 Install the latest GitHub Release:
 
@@ -114,10 +116,41 @@ scripts/tag-release.sh
 ```
 
 That creates and pushes a tag like `v0.1.0`. GitHub Actions then builds the optimized
-Linux binary, packages it, publishes a GitHub Release, and uploads checksums.
+Linux, Windows, and macOS assets, publishes a GitHub Release, and uploads checksums.
 
 Package-manager installs (`.deb`, RPM, AUR, Flatpak, distro repos, app stores) are
 planned later. For now the supported install path is the GitHub Release installer above.
+
+## Native Windows and macOS clients
+
+TailScout keeps each desktop shell native:
+
+- Linux: Rust + GTK4/libadwaita in `src/ui/`
+- Windows: C# + WinUI 3 in `platform/windows/`
+- macOS: SwiftPM + SwiftUI in `platform/macos/`
+
+The Windows and macOS clients use the Tailscale CLI for parity with the Linux
+backend: status, connect/disconnect, login/logout, saved profile switching,
+exit-node controls, Taildrop send/receive, and diagnostics.
+
+Build notes:
+
+```powershell
+cd platform\windows
+dotnet restore .\TailScout.Windows.sln
+dotnet test .\TailScout.Windows.Tests\TailScout.Windows.Tests.csproj -c Release
+dotnet build .\TailScout.Windows\TailScout.Windows.csproj -c Release -p:Platform=x64
+```
+
+```bash
+cd platform/macos
+swift test
+SIGNING_MODE=adhoc Scripts/package_app.sh release
+open .build/app/TailScout.app
+```
+
+See [`docs/native-platforms.md`](docs/native-platforms.md) for platform API notes
+and current limitations.
 
 ## Website
 
@@ -137,6 +170,8 @@ To publish it, enable GitHub Pages in the repository settings:
 - `src/tailscale/` — pure, unit-tested client + data models (CLI wrapper + LocalAPI socket reader)
 - `src/settings.rs` — tiny XDG config helper for local preferences
 - `src/ui/` — thin libadwaita view layer (`window.rs`, `device_row.rs`, `dialogs.rs`, `help.rs`, CSS)
+- `platform/windows/` — native WinUI 3 shell and Windows parser tests
+- `platform/macos/` — native SwiftPM/SwiftUI shell and macOS packaging scripts
 - `tests/` — parsing and integration tests
 
 See `AGENTS.md` for contributor rules, `CONTRIBUTING.md` for how to contribute, and `CHANGELOG.md` for version history.

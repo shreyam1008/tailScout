@@ -12,9 +12,13 @@ on:
 permissions:
   contents: write
 
+env:
+  CARGO_TERM_COLOR: always
+  DOTNET_NOLOGO: true
+
 jobs:
-  test:
-    name: Test
+  linux-rust:
+    name: Linux Rust GUI
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
@@ -49,10 +53,69 @@ jobs:
       - name: Build debug binary
         run: cargo build --locked
 
-  release:
-    name: Build release asset
+  rust-backend-cross:
+    name: Rust backend on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-15]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: Run GUI-free backend tests
+        run: cargo test --locked --lib --tests
+
+  windows-native:
+    name: Windows WinUI
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        shell: pwsh
+        run: dotnet restore platform/windows/TailScout.Windows.sln
+
+      - name: Test Windows core
+        shell: pwsh
+        run: dotnet test platform/windows/TailScout.Windows.Tests/TailScout.Windows.Tests.csproj -c Release --no-restore
+
+      - name: Build WinUI app
+        shell: pwsh
+        run: dotnet build platform/windows/TailScout.Windows/TailScout.Windows.csproj -c Release -p:Platform=x64 --no-restore
+
+  macos-native:
+    name: macOS SwiftUI
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test Swift package
+        run: swift test
+        working-directory: platform/macos
+
+      - name: Build Swift package
+        run: swift build -c release
+        working-directory: platform/macos
+
+  package-linux:
+    name: Package Linux
     runs-on: ubuntu-24.04
-    needs: test
+    needs: linux-rust
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
       - name: Checkout
@@ -69,14 +132,107 @@ jobs:
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
-        with:
-          components: rustfmt, clippy
 
       - name: Cache cargo
         uses: Swatinem/rust-cache@v2
 
-      - name: Package release
+      - name: Package Linux release
         run: scripts/package-release.sh
+
+      - name: Upload Linux artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-linux
+          path: |
+            dist/tailscout-linux-x86_64.tar.gz
+            dist/tailscout-v*-linux-x86_64.tar.gz
+
+  package-windows:
+    name: Package Windows
+    runs-on: windows-latest
+    needs: windows-native
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Publish WinUI app
+        shell: pwsh
+        run: |
+          $version = "${env:GITHUB_REF_NAME}".TrimStart("v")
+          dotnet publish platform/windows/TailScout.Windows/TailScout.Windows.csproj `
+            -c Release `
+            -r win-x64 `
+            --self-contained true `
+            -p:Platform=x64 `
+            -p:WindowsPackageType=None `
+            -p:WindowsAppSDKSelfContained=true `
+            -o dist/windows/TailScout
+          Compress-Archive `
+            -Path dist/windows/TailScout/* `
+            -DestinationPath "dist/tailscout-v$version-windows-x64-winui.zip" `
+            -Force
+
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-windows
+          path: dist/tailscout-v*-windows-x64-winui.zip
+
+  package-macos:
+    name: Package macOS
+    runs-on: macos-15
+    needs: macos-native
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Package macOS app
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          ARCHES="arm64 x86_64" \
+            SIGNING_MODE=adhoc \
+            TAILSCOUT_VERSION="$version" \
+            TAILSCOUT_BUILD_NUMBER="${GITHUB_RUN_NUMBER:-1}" \
+            Scripts/package_app.sh release
+        working-directory: platform/macos
+
+      - name: Rename macOS artifact
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          mkdir -p dist
+          cp platform/macos/.build/app/TailScout-"$version".zip \
+            dist/tailscout-v"$version"-macos-universal.zip
+
+      - name: Upload macOS artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-macos
+          path: dist/tailscout-v*-macos-universal.zip
+
+  publish-release:
+    name: Publish GitHub Release
+    runs-on: ubuntu-24.04
+    needs: [package-linux, package-windows, package-macos]
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Download release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          pattern: release-*
+          merge-multiple: true
+
+      - name: Create checksums
+        run: |
+          cd dist
+          sha256sum * > SHA256SUMS
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
@@ -85,4 +241,6 @@ jobs:
           files: |
             dist/tailscout-linux-x86_64.tar.gz
             dist/tailscout-v*-linux-x86_64.tar.gz
+            dist/tailscout-v*-windows-x64-winui.zip
+            dist/tailscout-v*-macos-universal.zip
             dist/SHA256SUMS

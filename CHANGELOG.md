@@ -10,6 +10,22 @@ backend wraps the `tailscale` CLI and LocalAPI, which evolve over time.
 
 ## [Unreleased]
 
+### Added
+- Added a first-pass native Windows WinUI 3 client under `platform/windows/`, with CLI-backed status, connect/disconnect, login/logout, profile switching, exit-node controls, Taildrop, diagnostics, and parser tests.
+- Added a first-pass native macOS SwiftUI client under `platform/macos/`, with SwiftPM packaging, CLI-backed workflows, and parsing tests.
+- Added native platform API notes documenting why Windows and macOS use the Tailscale CLI first while Linux keeps the LocalAPI socket fast path.
+- Expanded GitHub Actions to verify Linux, Windows, and macOS paths and publish Linux tarballs, Windows WinUI ZIPs, macOS app ZIPs, and checksums on version tags.
+
+### Changed
+- Made GTK/libadwaita dependencies Linux-targeted so the pure Rust backend tests can run on Windows and macOS CI without GTK.
+
+### Verified
+- Verified Rust backend against **Tailscale 1.98.4** sample JSON.
+- `cargo test --locked --all-targets`: 19 passing on Linux.
+- `cargo clippy --locked --all-targets`: clean on Linux.
+- `dotnet test platform/windows/TailScout.Windows.Tests/TailScout.Windows.Tests.csproj -c Release`: 3 passing on Linux for the Windows core parser project.
+- macOS SwiftUI build requires macOS/Xcode; Ubuntu validation was limited to shell syntax and script permissions.
+
 ## [0.1.2] - 2026-06-10
 
 ### Changed
