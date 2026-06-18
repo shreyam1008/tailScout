@@ -65,6 +65,11 @@ check a different metric.
 `-SkipStartupRefresh` measures the WinUI shell without requiring a running
 Tailscale daemon or `tailscale.exe` during the baseline run.
 
+GitHub Actions validates the WinUI build, published layout, and this script's
+PowerShell syntax. Run the working-set measurement on an interactive Windows
+desktop; hosted Windows runners do not provide a reliable WinUI desktop session
+for this measurement.
+
 ## Project Layout
 
 - `TailScout.Windows.Core`: pure parser and CLI service library.

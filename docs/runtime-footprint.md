@@ -22,7 +22,7 @@ the ceiling, investigate before raising it.
 |---|---:|---:|---|
 | Linux GTK/libadwaita desktop | PSS | 100 MiB | Measured locally at ~68 MiB PSS on Ubuntu GNOME |
 | Linux GTK/libadwaita CI headless | PSS | 260 MiB | GitHub `xvfb` runner measured ~225 MiB PSS because toolkit/graphics pages are not shared with a normal desktop session |
-| Windows WinUI 3 | Peak working set | 180 MiB | Local Windows validation required |
+| Windows WinUI 3 desktop | Peak working set | 180 MiB | Run locally on an interactive Windows desktop; GitHub hosted Windows runners build/package but cannot provide a reliable WinUI desktop session for memory sampling |
 | macOS SwiftUI | Peak RSS | 120 MiB | GitHub macOS runner measured ~83 MiB RSS |
 
 ## Commands
@@ -42,6 +42,10 @@ cd platform\windows
   -SkipStartupRefresh `
   -BaselineMiB 180
 ```
+
+GitHub Actions validates the Windows build, publish layout, and measurement
+script syntax. Run the command above on a Windows desktop to enforce the actual
+WinUI working-set baseline.
 
 macOS:
 

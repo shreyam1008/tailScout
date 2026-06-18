@@ -12,7 +12,7 @@ backend wraps the `tailscale` CLI and LocalAPI, which evolve over time.
 
 ### Added
 - Added Linux, Windows, and macOS memory measurement helpers with configurable baseline failures.
-- Added CI memory smoke tests for the Linux GTK, Windows WinUI, and macOS SwiftUI clients.
+- Added CI memory smoke tests for the Linux GTK and macOS SwiftUI clients, plus Windows WinUI package/helper validation for local desktop memory checks.
 - Documented runtime footprint baselines and metric differences across platforms.
 
 ### Changed
