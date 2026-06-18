@@ -17,6 +17,7 @@ backend wraps the `tailscale` CLI and LocalAPI, which evolve over time.
 
 ### Changed
 - Reduced Linux device-list memory growth by sharing one status snapshot across row callbacks instead of cloning the full status for every row.
+- Clarified runtime footprint baselines, measurement commands, and platform links in README/native docs.
 
 ## [0.1.3] - 2026-06-18
 

@@ -9,8 +9,8 @@ nodes, and send files over Taildrop — without living in the terminal.
 
 **Built native.** TailScout is written in Rust and uses GTK4 + libadwaita — the same
 toolkit GNOME itself uses. No Electron, no web views, no bundled browser engine.
-Linux release builds are gated with a memory smoke test; current local idle usage
-is about 68 MiB PSS on Ubuntu GNOME. See [`docs/runtime-footprint.md`](docs/runtime-footprint.md).
+Release builds are checked for a low runtime footprint. Linux PSS and OS shared-memory overhead are tracked separately, and helper commands are centralized in
+[`docs/runtime-footprint.md`](docs/runtime-footprint.md).
 
 **Works across Linux desktops.** GTK4 runs natively on GNOME, KDE Plasma, XFCE,
 Cinnamon, MATE, Budgie, and tiling compositors (i3, Sway, Hyprland). That covers the
@@ -67,6 +67,19 @@ running.
   ```
 
 - Build deps: `libgtk-4-dev`, `libadwaita-1-dev`, `build-essential`, `pkg-config`
+
+## Runtime footprint
+
+TailScout is optimized for low memory in its baseline workflow. Current smoke-test
+targets are:
+
+- Linux GTK/libadwaita: `100 MiB` PSS release-target, plus `260 MiB` CI headless baseline
+- macOS SwiftUI: `120 MiB` RSS
+- Windows WinUI 3: `180 MiB` peak working set (interactive desktop only)
+
+PSS/RSS/working set are different metrics, so compare them only within the same
+platform and environment. See [`docs/runtime-footprint.md`](docs/runtime-footprint.md) for
+the exact commands and latest observed values.
 
 ## Build & run
 

@@ -8,6 +8,17 @@ TailScout keeps each desktop shell native:
 
 The shared rule is that Tailscale behavior stays CLI/API-backed and testable.
 
+## Runtime Footprint Checks
+
+Each client has a platform-specific measurement path:
+
+- Linux: `scripts/measure-memory.sh` (PSS smoke test with `TAILSCOUT_MEMORY_LIMIT_MIB`)
+- Windows: `platform/windows/scripts/Measure-TailScoutWindowsMemory.ps1`
+- macOS: `platform/macos/Scripts/measure_rss.sh`
+
+Current targets and exact command examples are documented in
+[`docs/runtime-footprint.md`](runtime-footprint.md).
+
 ## Tailscale Surface
 
 The cross-platform surface that is stable enough for all three native clients is

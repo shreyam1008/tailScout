@@ -1,17 +1,31 @@
 # Runtime Footprint
 
-TailScout is native on each desktop. The app should stay close to the platform
-toolkit floor: GTK/libadwaita on Linux, WinUI 3 on Windows, and SwiftUI on macOS.
+TailScout is native on each desktop. The baseline targets are tuned per platform:
+GTK/libadwaita on Linux, WinUI 3 on Windows, and SwiftUI on macOS.
 
-Memory metrics are platform-specific:
+Memory metrics are intentionally platform-specific:
 
-- **Linux:** use PSS as the release gate because RSS includes shared GTK,
-  libadwaita, graphics, font, and theme pages already loaded by the desktop.
-- **Windows:** use working set/private memory from the process. WinUI and the
-  Windows App SDK have a higher floor than the app code itself.
-- **macOS:** use RSS from `ps`. SwiftUI/AppKit frameworks are mostly system
-  supplied, so the package is small even though the process still maps system
-  frameworks at runtime.
+- **Linux:** use PSS because RSS also includes shared toolkit/framework pages already loaded by the desktop session.
+- **Windows:** use process working set/private memory. WinUI has a higher process floor than pure app code.
+- **macOS:** use RSS from `ps`; SwiftUI/AppKit frameworks are mostly system-supplied and shared, while the application process remains small.
+
+## Baselines
+
+These are smoke-test ceilings, not strict budgets. If a platform exceeds its
+ceiling, fix the regression before changing the value.
+
+| Platform | Metric | CI/Smoke target | Recent observed |
+|---|---|---:|---:|
+| Linux GTK/libadwaita (desktop) | PSS | `100 MiB` | `68.8 MiB` (Ubuntu GNOME, release build, idle) |
+| Linux GTK/libadwaita (GitHub Actions xvfb) | PSS | `260 MiB` | `232.1 MiB` peak |
+| Windows WinUI 3 | Peak working set | `180 MiB` | not measured on hosted GitHub runners |
+| macOS SwiftUI | RSS | `120 MiB` | `82.9 MiB` |
+
+## Commands
+
+Run each check from the relevant directory with release artifacts available.
+
+Linux:
 
 ## Baselines
 
@@ -33,7 +47,7 @@ Linux:
 TAILSCOUT_MEMORY_LIMIT_MIB=100 scripts/measure-memory.sh
 ```
 
-Windows:
+Windows (interactive desktop recommended):
 
 ```powershell
 cd platform\windows
@@ -43,9 +57,9 @@ cd platform\windows
   -BaselineMiB 180
 ```
 
-GitHub Actions validates the Windows build, publish layout, and measurement
-script syntax. Run the command above on a Windows desktop to enforce the actual
-WinUI working-set baseline.
+GitHub Actions validates the WinUI build, publish layout, and measurement script
+syntax. Run this command on an interactive Windows desktop to measure the real
+working-set baseline.
 
 macOS:
 
@@ -53,6 +67,18 @@ macOS:
 cd platform/macos
 Scripts/measure_rss.sh --build release --baseline-mib 120
 ```
+
+## How to update baselines
+
+- Update target values in the matrix/CLI arguments used by CI and local scripts after
+  confirming new usage is from intentional feature work.
+- Keep release checks using release artifacts:
+  - `TAILSCOUT_MEMORY_LIMIT_MIB=... scripts/measure-memory.sh`
+  - `Measure-TailScoutWindowsMemory.ps1 -BaselineMiB ...`
+  - `Scripts/measure_rss.sh --baseline-mib ...`
+
+If a baseline rises after an intentional feature set, call that out explicitly in
+`CHANGELOG.md`.
 
 ## Rules
 
