@@ -24,12 +24,12 @@
   <meta property="og:description" content="A free, open-source Rust + GTK4 desktop client for Tailscale on Linux. Lightweight, native, no Electron, no browser wrapper.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://shreyam1008.github.io/tailScout/">
-  <meta property="og:image" content="https://shreyam1008.github.io/tailScout/assets/og.svg">
+  <meta property="og:image" content="https://shreyam1008.github.io/tailScout/assets/tailscout-showcase-poster.png">
   <meta property="og:image:alt" content="TailScout native Tailscale GUI for Linux preview">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="TailScout — Native Tailscale GUI for Linux">
   <meta name="twitter:description" content="Free open-source Rust + GTK4 GUI for Tailscale on Linux. Taildrop, exit nodes, devices, accounts, permissions, no Electron.">
-  <meta name="twitter:image" content="https://shreyam1008.github.io/tailScout/assets/og.svg">
+  <meta name="twitter:image" content="https://shreyam1008.github.io/tailScout/assets/tailscout-showcase-poster.png">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -54,6 +54,9 @@
   </script>
   <style>
     .mesh-bg{background-image:radial-gradient(#0f172a 1px,transparent 1px);background-size:28px 28px}.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}.reveal.show{opacity:1;transform:none}.glass{background:rgba(255,255,255,.76);backdrop-filter:blur(18px)}.app-tilt{transform:perspective(1100px) rotateY(-7deg) rotateX(3deg)}@media(max-width:1024px){.app-tilt{transform:none}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}.reveal{opacity:1;transform:none}}
+
+    .media-shell{background:linear-gradient(135deg,#020617,#07111f 45%,#042f2e);}
+    .showcase-video{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:#020617}
   </style>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@graph":[{"@type":"WebSite","name":"TailScout","url":"https://shreyam1008.github.io/tailScout/","description":"Official landing page for TailScout, a native Tailscale GUI for Linux.","inLanguage":"en","publisher":{"@id":"#person"}},{"@type":"Person","@id":"#person","name":"Shreyam Adhikari","url":"https://shreyam1008.com.np","sameAs":["https://github.com/shreyam1008"]},{"@type":"SoftwareApplication","name":"TailScout","alternateName":["Tailscale GUI for Linux","Native Tailscale Linux Client","Rust GTK4 Tailscale GUI"],"description":"TailScout is a free, open-source native Rust + GTK4/libadwaita desktop GUI for Tailscale on Linux.","applicationCategory":"NetworkApplication","applicationSubCategory":"VPN client GUI","operatingSystem":"Linux","softwareVersion":"0.1.2","programmingLanguage":"Rust","runtimePlatform":"GTK4, libadwaita","license":"https://opensource.org/licenses/MIT","isAccessibleForFree":true,"url":"https://github.com/shreyam1008/tailScout","downloadUrl":"https://github.com/shreyam1008/tailScout/releases","codeRepository":"https://github.com/shreyam1008/tailScout","author":{"@id":"#person"},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"keywords":"Tailscale GUI, Linux Tailscale GUI, Rust GTK4, Taildrop, exit node, native Linux app, no Electron"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is TailScout an official Tailscale app?","acceptedAnswer":{"@type":"Answer","text":"No. TailScout is an independent open-source native Linux GUI that wraps the official Tailscale CLI and LocalAPI."}},{"@type":"Question","name":"Does TailScout use Electron?","acceptedAnswer":{"@type":"Answer","text":"No. TailScout is written in Rust and uses GTK4 with libadwaita. It does not bundle a browser engine."}},{"@type":"Question","name":"Can TailScout send Taildrop files to every visible peer?","acceptedAnswer":{"@type":"Answer","text":"Taildrop sending depends on Tailscale file-sharing policy and device ownership. TailScout shows available send actions when Tailscale reports the peer can receive files."}},{"@type":"Question","name":"How do I install TailScout on Linux?","acceptedAnswer":{"@type":"Answer","text":"Run the one-line installer from the GitHub Release: curl -fsSL https://raw.githubusercontent.com/shreyam1008/tailScout/main/scripts/install.sh | bash"}}]}]}
@@ -69,7 +72,7 @@
       </a>
       <div class="hidden items-center gap-7 text-sm font-semibold text-slate-600 md:flex">
         <a class="hover:text-black" href="#features">Features</a>
-        <a class="hover:text-black" href="#screenshots">Screenshots</a>
+        <a class="hover:text-black" href="#showcase">Showcase</a>
         <a class="hover:text-black" href="#seo-keywords">Use cases</a>
         <a class="hover:text-black" href="#install">Install</a>
         <a class="rounded-full bg-black px-4 py-2 text-white shadow-soft hover:-translate-y-0.5 hover:shadow-deep" href="https://github.com/shreyam1008/tailScout">GitHub</a>
@@ -120,14 +123,21 @@
       </div>
     </section>
 
-    <section id="screenshots" class="bg-slate-50 py-24">
+    <section id="showcase" class="bg-slate-50 py-24">
       <div class="mx-auto max-w-7xl px-5 sm:px-8">
-        <div class="reveal mx-auto max-w-3xl text-center"><h2 class="text-4xl font-black tracking-[-0.06em] sm:text-6xl">Screenshot-ready layout.</h2><p class="mt-5 text-lg text-slate-600">Replace these placeholders with real screenshots later. The page already includes descriptive alt text and captions for search and accessibility.</p></div>
-        <div class="mt-14 grid gap-5 md:grid-cols-3">
-          <figure class="reveal overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-soft"><div role="img" aria-label="TailScout main window showing connected tailnet overview and devices" class="grid aspect-[4/3] place-items-center bg-gradient-to-br from-slate-950 to-slate-800 p-8 text-white"><div class="grid h-2/3 w-4/5 place-items-center rounded-3xl border border-white/20 bg-white/10 font-black text-white/75">Main Window</div></div><figcaption class="p-5 text-sm text-slate-600">Connected tailnet overview with live device status.</figcaption></figure>
-          <figure class="reveal overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-soft"><div role="img" aria-label="TailScout device details view with owner IPs routes and traffic" class="grid aspect-[4/3] place-items-center bg-gradient-to-br from-slate-950 to-slate-800 p-8 text-white"><div class="grid h-2/3 w-4/5 place-items-center rounded-3xl border border-white/20 bg-white/10 font-black text-white/75">Device Details</div></div><figcaption class="p-5 text-sm text-slate-600">Owner, IPs, routes, endpoint, relay, Taildrop, and traffic.</figcaption></figure>
-          <figure class="reveal overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-soft"><div role="img" aria-label="TailScout Taildrop and exit node controls" class="grid aspect-[4/3] place-items-center bg-gradient-to-br from-slate-950 to-slate-800 p-8 text-white"><div class="grid h-2/3 w-4/5 place-items-center rounded-3xl border border-white/20 bg-white/10 font-black text-white/75">Taildrop + Exit Nodes</div></div><figcaption class="p-5 text-sm text-slate-600">Receive files, send to capable peers, and choose exit nodes.</figcaption></figure>
-        </div>
+        <div class="reveal mx-auto max-w-3xl text-center"><p class="font-black uppercase tracking-[.2em] text-slate-400">Project video</p><h2 class="mt-3 text-4xl font-black tracking-[-0.06em] sm:text-6xl">See the tailnet come alive.</h2><p class="mt-5 text-lg text-slate-600">A 36-second showcase of TailScout's native Linux Tailscale workflow: devices, Taildrop, exit nodes, health, accounts, and a visual tailnet map.</p></div>
+        <figure class="reveal mx-auto mt-14 max-w-6xl overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-deep">
+          <div class="media-shell p-2 sm:p-3">
+            <video class="showcase-video rounded-[1.35rem]" controls preload="metadata" poster="assets/tailscout-showcase-poster.png" aria-label="TailScout project showcase video">
+              <source src="assets/tailscout-showcase.mp4" type="video/mp4">
+              <a href="assets/tailscout-showcase.mp4">Watch the TailScout showcase video</a>.
+            </video>
+          </div>
+          <figcaption class="grid gap-4 p-5 text-sm text-slate-600 md:grid-cols-[1fr_auto] md:items-center">
+            <span>Native Rust + GTK4 controls for Taildrop, exit nodes, accounts, health checks, and live device context.</span>
+            <a class="inline-flex h-10 items-center justify-center rounded-full bg-black px-4 font-bold text-white" href="assets/tailscout-showcase.mp4">Open video</a>
+          </figcaption>
+        </figure>
       </div>
     </section>
 

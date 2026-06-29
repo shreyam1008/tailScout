@@ -21,6 +21,14 @@ it works correctly and KDE's `breeze-gtk` package helps it blend in.
 > Status: early (v0.1). Linux is the verified primary client. Windows WinUI 3
 > and macOS SwiftUI clients are in first-pass validation.
 
+## Showcase
+
+[![TailScout showcase video](docs/assets/tailscout-showcase-poster.png)](docs/assets/tailscout-showcase.mp4)
+
+Watch TailScout in motion: native Linux Tailscale controls, Taildrop, exit-node selection, account context, live health, and a visual tailnet map in a 36-second project showcase.
+
+Music bed: original generated synth track for this project video.
+
 ## Quick install (Linux)
 
 Install the latest GitHub Release:
