@@ -16,6 +16,7 @@ backend wraps the `tailscale` CLI and LocalAPI, which evolve over time.
 - Documented runtime footprint baselines and metric differences across platforms.
 
 ### Changed
+- Moved the public product site to `tailscout.shreyam1008.com.np` and aligned canonical, social, sitemap, discovery, manifest, and package metadata URLs.
 - Reduced Linux device-list memory growth by sharing one status snapshot across row callbacks instead of cloning the full status for every row.
 - Clarified runtime footprint baselines, measurement commands, and platform links in README/native docs.
 

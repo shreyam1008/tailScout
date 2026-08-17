@@ -4,7 +4,7 @@
 
 Official project links:
 
-- Landing page: https://shreyam1008.github.io/tailScout/
+- Landing page: https://tailscout.shreyam1008.com.np/
 - Source code: https://github.com/shreyam1008/tailScout
 - Releases: https://github.com/shreyam1008/tailScout/releases
 - Issues: https://github.com/shreyam1008/tailScout/issues

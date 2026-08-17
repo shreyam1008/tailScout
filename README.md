@@ -181,6 +181,8 @@ site with no build step. The page uses Tailwind via CDN, a tiny local JavaScript
 file, and SEO/discovery files including `robots.txt`, `sitemap.xml`, `llms.txt`,
 `llms-full.txt`, and `site.webmanifest`.
 
+The public product site is <https://tailscout.shreyam1008.com.np/>.
+
 To publish it, enable GitHub Pages in the repository settings:
 
 - **Source:** Deploy from a branch

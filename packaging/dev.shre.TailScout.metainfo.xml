@@ -23,7 +23,7 @@
     </ul>
   </description>
   <launchable type="desktop-id">dev.shre.TailScout.desktop</launchable>
-  <url type="homepage">https://shreyam1008.github.io/tailScout/</url>
+  <url type="homepage">https://tailscout.shreyam1008.com.np/</url>
   <url type="bugtracker">https://github.com/shreyam1008/tailScout/issues</url>
   <url type="vcs-browser">https://github.com/shreyam1008/tailScout</url>
   <categories>
@@ -66,8 +66,8 @@
   </releases>
   <screenshots>
     <screenshot type="default">
-      <caption>Main device list</caption>
-      <image>https://shreyam1008.github.io/tailScout/screenshot-1.png</image>
+      <caption>TailScout workflow showcase</caption>
+      <image>https://tailscout.shreyam1008.com.np/assets/tailscout-showcase-poster.png</image>
     </screenshot>
   </screenshots>
 </component>

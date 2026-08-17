@@ -4,7 +4,7 @@ TailScout is a native Linux desktop GUI for Tailscale, built with Rust, GTK4, an
 
 ## Canonical links
 
-- Website: https://shreyam1008.github.io/tailScout/
+- Website: https://tailscout.shreyam1008.com.np/
 - GitHub repository: https://github.com/shreyam1008/tailScout
 - Releases: https://github.com/shreyam1008/tailScout/releases
 - Issue tracker: https://github.com/shreyam1008/tailScout/issues

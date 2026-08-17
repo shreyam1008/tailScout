@@ -6,6 +6,7 @@ rust-version = "1.80"
 description = "A clean, native Rust GUI for Tailscale on Linux"
 license = "MIT"
 repository = "https://github.com/shreyam1008/tailScout"
+homepage = "https://tailscout.shreyam1008.com.np/"
 default-run = "tailscout"
 
 [[bin]]
