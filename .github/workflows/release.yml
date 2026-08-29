@@ -24,6 +24,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Validate public release truth
+        run: python3 scripts/check-release-truth.py
+
       - name: Install system dependencies
         run: |
           sudo apt-get update
