@@ -19,6 +19,18 @@ def fail(message: str) -> None:
     raise SystemExit(f"[check-release-truth] ERROR: {message}")
 
 
+def text(path: str) -> str:
+    return (ROOT / path).read_text(encoding="utf-8")
+
+
+def require_version(path: str, pattern: str, label: str) -> None:
+    match = re.search(pattern, text(path), flags=re.MULTILINE)
+    if not match:
+        fail(f"{path} has no {label} version")
+    if match.group(1) != VERSION:
+        fail(f"{path} {label} version {match.group(1)!r} does not match {VERSION!r}")
+
+
 visible_match = re.search(r'data-release-version="([^"]+)"', HTML)
 if not visible_match:
     fail("docs/index.html has no visible data-release-version marker")
@@ -50,5 +62,31 @@ if software.get("softwareVersion") != VERSION:
 expected_download = f"https://github.com/shreyam1008/tailScout/releases/tag/v{VERSION}"
 if software.get("downloadUrl") != expected_download:
     fail(f"JSON-LD downloadUrl must be {expected_download}")
+
+require_version(
+    "platform/windows/Directory.Build.props",
+    r"<Version>([^<]+)</Version>",
+    "Windows",
+)
+require_version(
+    "platform/macos/version.env",
+    r"^MARKETING_VERSION=(.+)$",
+    "macOS",
+)
+require_version(
+    "packaging/dev.shre.TailScout.metainfo.xml",
+    r'<release version="([^"]+)"',
+    "AppStream",
+)
+
+if f"## [{VERSION}]" not in text("CHANGELOG.md"):
+    fail(f"CHANGELOG.md has no {VERSION} release section")
+
+for stale_root in ("packaging", "snap"):
+    directory = ROOT / stale_root
+    if directory.exists():
+        for path in directory.rglob("*"):
+            if path.is_file() and "placeholder" in path.read_text(encoding="utf-8", errors="ignore").lower():
+                fail(f"{path.relative_to(ROOT)} still contains placeholder text")
 
 print(f"[check-release-truth] OK TailScout v{VERSION}")

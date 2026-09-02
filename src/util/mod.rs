@@ -2,20 +2,20 @@
 
 /// Turn a raw Tailscale OS string into a friendly label.
 pub fn os_label(os: &str) -> String {
-    match os {
+    match os.to_ascii_lowercase().as_str() {
         "" => "Unknown".to_string(),
         "linux" => "Linux".to_string(),
         "windows" => "Windows".to_string(),
-        "macOS" | "darwin" => "macOS".to_string(),
-        "iOS" => "iOS".to_string(),
+        "macos" | "darwin" => "macOS".to_string(),
+        "ios" => "iOS".to_string(),
         "android" => "Android".to_string(),
         "freebsd" => "FreeBSD".to_string(),
-        other => {
+        _ => {
             // Capitalize the first character, leave the rest as-is.
-            let mut chars = other.chars();
+            let mut chars = os.chars();
             match chars.next() {
                 Some(first) => first.to_uppercase().collect::<String>() + chars.as_str(),
-                None => other.to_string(),
+                None => os.to_string(),
             }
         }
     }

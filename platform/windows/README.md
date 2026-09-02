@@ -73,7 +73,7 @@ for this measurement.
 ## Project Layout
 
 - `TailScout.Windows.Core`: pure parser and CLI service library.
-- `TailScout.Windows.Tests`: backend parsing tests.
+- `TailScout.Windows.Tests`: backend parsing and command-contract tests.
 - `TailScout.Windows`: unpackaged WinUI 3 desktop app.
 
 ## Current Scope
@@ -90,3 +90,6 @@ The Windows client uses the Tailscale CLI for both reads and writes:
 
 LocalAPI named-pipe support is deliberately not implemented yet; CLI parity is
 the first Windows target and needs validation on a real Windows machine.
+
+Cross-platform behavior and UI terminology are defined in
+[`../../shared/README.md`](../../shared/README.md).

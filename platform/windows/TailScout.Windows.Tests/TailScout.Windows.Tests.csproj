@@ -15,4 +15,10 @@
   <ItemGroup>
     <ProjectReference Include="..\TailScout.Windows.Core\TailScout.Windows.Core.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\..\shared\fixtures\*.json"
+             Link="Fixtures\%(Filename)%(Extension)"
+             CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>

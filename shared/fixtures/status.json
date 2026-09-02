@@ -1,0 +1,69 @@
+{
+  "Version": "1.98.4-t9e69045b2",
+  "ClientVersion": "1.98.4",
+  "TUN": true,
+  "BackendState": "Running",
+  "MagicDNSSuffix": "tail9e520a.ts.net",
+  "CurrentTailnet": {
+    "Name": "jkp.org.in",
+    "MagicDNSSuffix": "tail9e520a.ts.net",
+    "MagicDNSEnabled": true
+  },
+  "Health": ["relay warning"],
+  "User": {
+    "110841043178303": {
+      "ID": 110841043178303,
+      "LoginName": "shreyama@jkp.org.in",
+      "DisplayName": "Shreyam Adhikari",
+      "ProfilePicURL": "https://example.invalid/photo.png"
+    },
+    "999": {
+      "ID": 999,
+      "LoginName": "guest@example.invalid",
+      "DisplayName": "Guest User"
+    }
+  },
+  "Self": {
+    "ID": "self-1",
+    "HostName": "shre",
+    "DNSName": "shre.tail9e520a.ts.net.",
+    "OS": "linux",
+    "TailscaleIPs": ["100.100.8.31", "fd7a:115c:a1e0::1"],
+    "Online": true,
+    "UserID": 110841043178303,
+    "ExitNodeOption": true
+  },
+  "Peer": {
+    "key1": {
+      "ID": "peer-win",
+      "HostName": "dev-pc",
+      "DNSName": "dev-pc.tail9e520a.ts.net.",
+      "OS": "windows",
+      "TailscaleIPs": ["100.100.8.30"],
+      "AllowedIPs": ["100.100.8.30/32", "10.10.0.0/16"],
+      "Online": false,
+      "RxBytes": 2048,
+      "TxBytes": 1024
+    },
+    "key2": {
+      "ID": "peer-phone",
+      "HostName": "pixel",
+      "DNSName": "pixel.tail9e520a.ts.net.",
+      "OS": "android",
+      "TailscaleIPs": ["100.100.8.32"],
+      "Online": true,
+      "ExitNodeOption": true,
+      "TaildropTarget": 3,
+      "UserID": 110841043178303
+    },
+    "key3": {
+      "ID": "peer-guest",
+      "HostName": "guest-phone",
+      "OS": "iOS",
+      "TailscaleIPs": ["100.100.8.33"],
+      "Online": true,
+      "TaildropTarget": 4,
+      "UserID": 999
+    }
+  }
+}

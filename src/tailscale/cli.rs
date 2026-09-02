@@ -70,7 +70,7 @@ pub fn status() -> Result<Status> {
 
 pub fn profiles() -> Result<Vec<Profile>> {
     let json = run(["switch", "--list", "--json"])?;
-    Ok(serde_json::from_str(&json)?)
+    Ok(Profile::parse_list(&json)?)
 }
 
 pub fn switch_profile(id_or_name: &str) -> Result<()> {

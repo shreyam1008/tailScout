@@ -48,6 +48,11 @@
     <display_length compare="ge">768</display_length>
   </recommends>
   <releases>
+    <release version="0.1.3" date="2026-06-18">
+      <description>
+        <p>Added native Windows and macOS preview clients plus cross-platform release and memory checks.</p>
+      </description>
+    </release>
     <release version="0.1.2" date="2026-06-10">
       <description>
         <p>Admin Console moved to Overview. Polished copyable output/error windows. Improved device-detail popover. Cleaner one-line installer.</p>

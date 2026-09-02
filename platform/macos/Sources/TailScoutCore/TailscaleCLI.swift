@@ -6,7 +6,6 @@ public enum TailscaleCLIError: LocalizedError, Sendable {
     case invalidFile(URL)
     case foldersCannotBeSent(URL)
     case invalidDirectory(URL)
-    case missingTarget(String)
 
     public var errorDescription: String? {
         switch self {
@@ -24,8 +23,6 @@ public enum TailscaleCLIError: LocalizedError, Sendable {
             return "Taildrop send expects a file, not a folder: \(url.path)"
         case .invalidDirectory(let url):
             return "Folder does not exist: \(url.path)"
-        case .missingTarget(let device):
-            return "No usable Tailscale address was found for \(device)."
         }
     }
 }
@@ -33,10 +30,16 @@ public enum TailscaleCLIError: LocalizedError, Sendable {
 public struct TailscaleCLI: Sendable {
     public static let defaultBinaryName = "tailscale"
 
-    private let executablePath: String?
+    private let runner: @Sendable ([String]) async throws -> String
 
     public init(executablePath: String? = nil) {
-        self.executablePath = executablePath
+        runner = { arguments in
+            try await runTailscaleProcess(executablePath: executablePath, arguments: arguments)
+        }
+    }
+
+    init(runner: @escaping @Sendable ([String]) async throws -> String) {
+        self.runner = runner
     }
 
     public func status() async throws -> TailscaleStatus {
@@ -117,48 +120,6 @@ public struct TailscaleCLI: Sendable {
     }
 
     public func run(_ arguments: [String]) async throws -> String {
-        let executablePath = self.executablePath
-        return try await Task.detached(priority: .userInitiated) {
-            try runSynchronous(executablePath: executablePath, arguments: arguments)
-        }.value
+        try await runner(arguments)
     }
-}
-
-private func runSynchronous(executablePath: String?, arguments: [String]) throws -> String {
-    let process = Process()
-    if let executablePath {
-        process.executableURL = URL(fileURLWithPath: executablePath)
-        process.arguments = arguments
-    } else {
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-        process.arguments = [TailscaleCLI.defaultBinaryName] + arguments
-    }
-
-    let stdout = Pipe()
-    let stderr = Pipe()
-    process.standardOutput = stdout
-    process.standardError = stderr
-
-    do {
-        try process.run()
-    } catch {
-        throw TailscaleCLIError.launchFailed(error.localizedDescription)
-    }
-
-    process.waitUntilExit()
-
-    let outputData = stdout.fileHandleForReading.readDataToEndOfFile()
-    let errorData = stderr.fileHandleForReading.readDataToEndOfFile()
-    let output = String(data: outputData, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-    let errorOutput = String(data: errorData, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-
-    guard process.terminationStatus == 0 else {
-        throw TailscaleCLIError.commandFailed(
-            arguments: arguments,
-            code: process.terminationStatus,
-            message: errorOutput.isEmpty ? output : errorOutput
-        )
-    }
-
-    return output
 }

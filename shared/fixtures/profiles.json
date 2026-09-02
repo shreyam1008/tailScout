@@ -1,0 +1,23 @@
+[
+  {
+    "id": "profile-a",
+    "nickname": "Work",
+    "tailnet": "example.com",
+    "account": "me@example.com",
+    "selected": true
+  },
+  {
+    "id": "profile-b",
+    "nickname": null,
+    "tailnet": "personal.ts.net",
+    "account": "me@home.example",
+    "selected": false
+  },
+  {
+    "id": null,
+    "nickname": null,
+    "tailnet": null,
+    "account": null,
+    "selected": null
+  }
+]

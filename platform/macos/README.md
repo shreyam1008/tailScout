@@ -1,6 +1,6 @@
 # TailScout for macOS
 
-This is a first-pass native macOS TailScout app built with SwiftPM and SwiftUI.
+This is the native macOS TailScout preview built with SwiftPM and SwiftUI.
 It has no Xcode project. The app shells out to the official `tailscale` CLI and
 keeps parsing/command logic in `TailScoutCore` so it can be tested without a UI.
 
@@ -63,7 +63,7 @@ the sampled peak RSS exceeds the configured baseline.
 The package script writes:
 
 - `.build/app/TailScout.app`
-- `.build/app/TailScout-0.1.0.zip` when `ditto` is available
+- `.build/app/TailScout-<version>.zip` when `ditto` is available
 
 ## CI Shape
 
@@ -81,7 +81,7 @@ Release signing can pass:
 APP_IDENTITY="Developer ID Application: Example" Scripts/package_app.sh release
 ```
 
-Notarization is intentionally not included in this first pass.
+Notarization is not included in the preview release pipeline.
 
 ## Implemented Workflows
 
@@ -99,7 +99,7 @@ All CLI calls are async and run off the main actor.
 
 ## Limitations
 
-- This is a first-pass macOS app, separate from the Linux GTK UI.
+- This preview remains separate from the Linux GTK UI so both stay native.
 - Reads use the CLI only. The macOS LocalAPI path is not implemented yet.
 - Taildrop receive depends on the installed CLI supporting
   `tailscale file get --conflict=rename <folder>`.
@@ -108,3 +108,6 @@ All CLI calls are async and run off the main actor.
   privileges, configure Tailscale operator permissions outside the app.
 - No sandbox entitlements, notarization, app icon, Sparkle updater, or menu bar
   mode are included yet.
+
+Cross-platform behavior and UI terminology are defined in
+[`../../shared/README.md`](../../shared/README.md).

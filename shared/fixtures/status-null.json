@@ -1,0 +1,16 @@
+{
+  "Version": null,
+  "ClientVersion": null,
+  "BackendState": "Stopped",
+  "MagicDNSSuffix": null,
+  "Health": null,
+  "Peer": null,
+  "User": null,
+  "Self": {
+    "HostName": null,
+    "TailscaleIPs": null,
+    "AllowedIPs": null,
+    "Online": null,
+    "TaildropTarget": null
+  }
+}

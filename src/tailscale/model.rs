@@ -47,6 +47,7 @@ impl BackendState {
             Self::Running => "Connected".to_string(),
             Self::Stopped => "Disconnected".to_string(),
             Self::Starting => "Starting…".to_string(),
+            Self::Other(value) if value.is_empty() => "Unknown".to_string(),
             Self::Other(value) => value.clone(),
         }
     }
@@ -62,7 +63,6 @@ pub struct Node {
     pub os: String,
     pub tailscale_ips: Vec<String>,
     pub allowed_ips: Vec<String>,
-    pub addrs: Vec<String>,
     pub cur_addr: String,
     pub relay: String,
     pub online: bool,
@@ -105,6 +105,14 @@ impl Node {
         self.dns_name.trim_end_matches('.').to_string()
     }
 
+    /// Stable target accepted by mutating CLI commands.
+    pub fn cli_target(&self) -> Option<&str> {
+        self.primary_ip().or_else(|| {
+            let dns = self.dns_name.trim_end_matches('.');
+            (!dns.is_empty()).then_some(dns)
+        })
+    }
+
     pub fn can_receive_taildrop(&self) -> bool {
         self.online && self.taildrop_target > 0 && self.no_file_sharing_reason.is_empty()
     }
@@ -121,7 +129,6 @@ pub struct UserProfile {
     pub id: u64,
     pub login_name: String,
     pub display_name: String,
-    pub profile_pic_url: String,
 }
 
 impl UserProfile {
@@ -132,7 +139,11 @@ impl UserProfile {
         if !self.login_name.is_empty() {
             return self.login_name.clone();
         }
-        self.id.to_string()
+        if self.id == 0 {
+            "Unknown user".to_string()
+        } else {
+            self.id.to_string()
+        }
     }
 }
 
@@ -158,6 +169,14 @@ pub struct Profile {
 }
 
 impl Profile {
+    pub fn parse_list(input: &str) -> Result<Vec<Self>, serde_json::Error> {
+        let profiles: Vec<Self> = serde_json::from_str(input)?;
+        Ok(profiles
+            .into_iter()
+            .filter(|profile| !profile.display_name().is_empty())
+            .collect())
+    }
+
     pub fn display_name(&self) -> String {
         if !self.nickname.is_empty() {
             return self.nickname.clone();
@@ -169,6 +188,14 @@ impl Profile {
             return self.tailnet.clone();
         }
         self.id.clone()
+    }
+
+    pub fn switch_key(&self) -> String {
+        if !self.id.is_empty() {
+            self.id.clone()
+        } else {
+            self.display_name()
+        }
     }
 }
 
@@ -197,13 +224,7 @@ impl Status {
     /// Peers sorted: online first, then by display name (case-insensitive).
     pub fn sorted_peers(&self) -> Vec<Node> {
         let mut peers = self.peers.clone();
-        peers.sort_by(|a, b| {
-            b.online.cmp(&a.online).then_with(|| {
-                a.display_name()
-                    .to_lowercase()
-                    .cmp(&b.display_name().to_lowercase())
-            })
-        });
+        peers.sort_by_cached_key(|node| (!node.online, node.display_name().to_lowercase()));
         peers
     }
 
@@ -213,11 +234,31 @@ impl Status {
             .map(UserProfile::display_label)
     }
 
+    /// Whether a peer belongs to the same Tailscale user as this device.
+    /// Older daemon responses omit user IDs, so an unknown ID stays permissive.
+    pub fn has_same_owner(&self, node: &Node) -> bool {
+        self.this_node.as_ref().map_or(true, |this| {
+            this.user_id == 0 || node.user_id == 0 || this.user_id == node.user_id
+        })
+    }
+
+    /// Taildrop is usable only when both daemon capability and ownership allow it.
+    pub fn can_send_taildrop_to(&self, node: &Node) -> bool {
+        node.can_receive_taildrop() && self.has_same_owner(node)
+    }
+
+    pub fn display_version(&self) -> &str {
+        if self.version.is_empty() {
+            &self.client_version
+        } else {
+            &self.version
+        }
+    }
+
     pub fn exit_node_options(&self) -> Vec<Node> {
-        self.peers
-            .iter()
+        self.sorted_peers()
+            .into_iter()
             .filter(|node| node.exit_node_option)
-            .cloned()
             .collect()
     }
 }
@@ -289,8 +330,6 @@ struct RawNode {
     tailscale_ips: Vec<String>,
     #[serde(default, deserialize_with = "empty_if_null", rename = "AllowedIPs")]
     allowed_ips: Vec<String>,
-    #[serde(default, deserialize_with = "empty_if_null", rename = "Addrs")]
-    addrs: Vec<String>,
     #[serde(default, deserialize_with = "empty_if_null", rename = "CurAddr")]
     cur_addr: String,
     #[serde(default, deserialize_with = "empty_if_null", rename = "Relay")]
@@ -335,7 +374,6 @@ impl RawNode {
             os: self.os,
             tailscale_ips: self.tailscale_ips,
             allowed_ips: self.allowed_ips,
-            addrs: self.addrs,
             cur_addr: self.cur_addr,
             relay: self.relay,
             online: self.online,
@@ -360,8 +398,6 @@ struct RawUserProfile {
     login_name: String,
     #[serde(default, deserialize_with = "empty_if_null", rename = "DisplayName")]
     display_name: String,
-    #[serde(default, deserialize_with = "empty_if_null", rename = "ProfilePicURL")]
-    profile_pic_url: String,
 }
 
 impl RawUserProfile {
@@ -370,7 +406,6 @@ impl RawUserProfile {
             id,
             login_name: self.login_name,
             display_name: self.display_name,
-            profile_pic_url: self.profile_pic_url,
         }
     }
 }

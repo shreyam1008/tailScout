@@ -3,71 +3,19 @@
 
 #[cfg(target_os = "linux")]
 use tailscout::tailscale::localapi::parse_response;
-use tailscout::tailscale::model::{BackendState, Status};
+use tailscout::tailscale::model::{BackendState, Profile, Status};
 use tailscout::util::{human_bytes, os_label};
 
-const SAMPLE_STATUS: &str = r#"
-{
-  "Version": "1.98.4-t9e69045b2",
-  "ClientVersion": "1.98.4",
-  "TUN": true,
-  "BackendState": "Running",
-  "MagicDNSSuffix": "tail9e520a.ts.net",
-  "CurrentTailnet": {
-    "Name": "jkp.org.in",
-    "MagicDNSSuffix": "tail9e520a.ts.net",
-    "MagicDNSEnabled": true
-  },
-  "Health": ["relay warning"],
-  "User": {
-    "110841043178303": {
-      "ID": 110841043178303,
-      "LoginName": "shreyama@jkp.org.in",
-      "DisplayName": "Shreyam Adhikari",
-      "ProfilePicURL": "https://example.invalid/photo.png"
-    }
-  },
-  "Self": {
-    "ID": "self-1",
-    "HostName": "shre",
-    "DNSName": "shre.tail9e520a.ts.net.",
-    "OS": "linux",
-    "TailscaleIPs": ["100.100.8.31", "fd7a:115c:a1e0::1"],
-    "Online": true,
-    "UserID": 110841043178303
-  },
-  "Peer": {
-    "key1": {
-      "ID": "peer-win",
-      "HostName": "dev-pc",
-      "DNSName": "dev-pc.tail9e520a.ts.net.",
-      "OS": "windows",
-      "TailscaleIPs": ["100.100.8.30"],
-      "AllowedIPs": ["100.100.8.30/32", "10.10.0.0/16"],
-      "Online": false,
-      "RxBytes": 2048,
-      "TxBytes": 1024
-    },
-    "key2": {
-      "ID": "peer-phone",
-      "HostName": "pixel",
-      "DNSName": "pixel.tail9e520a.ts.net.",
-      "OS": "android",
-      "TailscaleIPs": ["100.100.8.32"],
-      "Online": true,
-      "ExitNodeOption": true,
-      "TaildropTarget": 3,
-      "UserID": 110841043178303
-    }
-  }
-}
-"#;
+const SAMPLE_STATUS: &str = include_str!("../shared/fixtures/status.json");
+const NULL_STATUS: &str = include_str!("../shared/fixtures/status-null.json");
+const SAMPLE_PROFILES: &str = include_str!("../shared/fixtures/profiles.json");
 
 #[test]
 fn parses_top_level_fields() {
     let status = Status::from_json(SAMPLE_STATUS).expect("should parse");
     assert_eq!(status.version, "1.98.4-t9e69045b2");
     assert_eq!(status.client_version, "1.98.4");
+    assert_eq!(status.display_version(), "1.98.4-t9e69045b2");
     assert!(status.tun);
     assert_eq!(status.backend_state, BackendState::Running);
     assert!(status.backend_state.is_running());
@@ -84,6 +32,7 @@ fn parses_self_node() {
     let me = status.this_node.expect("self present");
     assert_eq!(me.display_name(), "shre");
     assert_eq!(me.primary_ip(), Some("100.100.8.31")); // prefers IPv4
+    assert_eq!(me.cli_target(), Some("100.100.8.31"));
     assert_eq!(me.clean_dns_name(), "shre.tail9e520a.ts.net");
     assert_eq!(me.user_id, 110841043178303);
 }
@@ -91,18 +40,21 @@ fn parses_self_node() {
 #[test]
 fn peers_sorted_online_first() {
     let status = Status::from_json(SAMPLE_STATUS).unwrap();
-    assert_eq!(status.peers.len(), 2);
+    assert_eq!(status.peers.len(), 3);
 
     let sorted = status.sorted_peers();
-    // Online "pixel" should come before offline "dev-pc".
-    assert_eq!(sorted[0].display_name(), "pixel");
+    assert_eq!(
+        sorted
+            .iter()
+            .map(|node| node.display_name())
+            .collect::<Vec<_>>(),
+        ["guest-phone", "pixel", "dev-pc"]
+    );
     assert!(sorted[0].online);
-    assert_eq!(sorted[1].display_name(), "dev-pc");
-    assert!(!sorted[1].online);
-    assert!(!sorted[1].exit_node_option);
-    assert!(sorted[0].exit_node_option);
-    assert!(sorted[0].can_receive_taildrop());
-    assert!(sorted[1].is_subnet_router());
+    assert!(!sorted[2].online);
+    assert!(sorted[1].exit_node_option);
+    assert!(sorted[1].can_receive_taildrop());
+    assert!(sorted[2].is_subnet_router());
 }
 
 #[test]
@@ -117,6 +69,15 @@ fn resolves_owner_profiles() {
         status.owner_label(phone).as_deref(),
         Some("Shreyam Adhikari")
     );
+    assert!(status.can_send_taildrop_to(phone));
+
+    let guest = status
+        .peers
+        .iter()
+        .find(|peer| peer.display_name() == "guest-phone")
+        .unwrap();
+    assert!(guest.can_receive_taildrop());
+    assert!(!status.can_send_taildrop_to(guest));
 }
 
 #[test]
@@ -132,25 +93,7 @@ fn handles_empty_and_missing_fields() {
 
 #[test]
 fn handles_null_fields_from_tailscale() {
-    let status = Status::from_json(
-        r#"{
-            "Version": null,
-            "ClientVersion": null,
-            "BackendState": "Stopped",
-            "MagicDNSSuffix": null,
-            "Health": null,
-            "Peer": null,
-            "User": null,
-            "Self": {
-                "HostName": null,
-                "TailscaleIPs": null,
-                "AllowedIPs": null,
-                "Online": null,
-                "TaildropTarget": null
-            }
-        }"#,
-    )
-    .unwrap();
+    let status = Status::from_json(NULL_STATUS).unwrap();
     assert_eq!(status.version, "");
     assert!(status.health.is_empty());
     assert!(status.peers.is_empty());
@@ -158,6 +101,16 @@ fn handles_null_fields_from_tailscale() {
     assert_eq!(node.display_name(), "unknown");
     assert!(node.tailscale_ips.is_empty());
     assert!(!node.online);
+}
+
+#[test]
+fn parses_shared_profiles() {
+    let profiles = Profile::parse_list(SAMPLE_PROFILES).unwrap();
+    assert_eq!(profiles.len(), 2);
+    assert_eq!(profiles[0].display_name(), "Work");
+    assert!(profiles[0].selected);
+    assert_eq!(profiles[1].display_name(), "me@home.example");
+    assert_eq!(profiles[1].switch_key(), "profile-b");
 }
 
 #[test]
@@ -221,6 +174,8 @@ fn os_labels_are_friendly() {
     assert_eq!(os_label("windows"), "Windows");
     assert_eq!(os_label("android"), "Android");
     assert_eq!(os_label("macOS"), "macOS");
+    assert_eq!(os_label("macos"), "macOS");
+    assert_eq!(os_label("ios"), "iOS");
     assert_eq!(os_label(""), "Unknown");
     assert_eq!(os_label("plan9"), "Plan9");
 }

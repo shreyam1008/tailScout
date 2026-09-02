@@ -45,22 +45,15 @@ pub fn build_row(node: &Node, status: &Status) -> (adw::ActionRow, Option<gtk::B
     status_label.set_valign(gtk::Align::Center);
     row.add_suffix(&status_label);
 
-    let same_owner = status
-        .this_node
-        .as_ref()
-        .map(|this_node| {
-            this_node.user_id == 0 || node.user_id == 0 || this_node.user_id == node.user_id
-        })
-        .unwrap_or(true);
-    let send_button = if node.can_receive_taildrop() && same_owner {
+    let send_button = if status.can_send_taildrop_to(node) {
         let button = gtk::Button::from_icon_name("document-send-symbolic");
         button.add_css_class("flat");
         button.set_valign(gtk::Align::Center);
-        button.set_tooltip_text(Some("Send files via Taildrop"));
+        button.set_tooltip_text(Some("Send File via Taildrop"));
         row.add_suffix(&button);
         Some(button)
     } else {
-        if !same_owner {
+        if !status.has_same_owner(node) {
             row.set_subtitle(&glib::markup_escape_text(&format!(
                 "{subtitle} · Taildrop unavailable: different Tailscale user"
             )));

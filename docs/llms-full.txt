@@ -43,7 +43,7 @@ TailScout uses Tailscale's official command-line client for mutating actions suc
 - Tailscale read path: LocalAPI socket and `tailscale status --json`
 - Tailscale action path: official `tailscale` CLI
 - License: MIT
-- Supported OS: Linux x86_64 first
+- Supported OS: Linux x86_64 primary; native Windows and macOS clients are in preview
 
 ## Installation
 

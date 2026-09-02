@@ -18,7 +18,7 @@ Key facts:
 - Wraps the official Tailscale CLI and LocalAPI.
 - Supports tailnet status, device list, connect/disconnect, Taildrop, exit nodes, account switching, diagnostics, and Polkit operator permission repair.
 - Licensed under MIT.
-- Linux first; Windows and macOS planned later.
+- Linux is the verified primary client; native Windows and macOS preview clients are included.
 
 Common search phrases:
 

@@ -1,7 +1,7 @@
 # TailScout
 
-A clean, **native Rust GUI for Tailscale** on Linux — built with GTK4 + libadwaita.
-Native Windows and macOS clients now live beside it as first-pass platform shells.
+A clean, **native desktop GUI for Tailscale**. Linux uses Rust with GTK4 +
+libadwaita; native WinUI 3 and SwiftUI clients live beside it.
 
 No official Linux desktop client exists for Tailscale. TailScout fills that gap: a
 modern, low-footprint window to see your tailnet, connect/disconnect, manage exit
@@ -19,7 +19,7 @@ others it renders its own Adwaita chrome — it won't match Breeze pixel-for-pix
 it works correctly and KDE's `breeze-gtk` package helps it blend in.
 
 > Status: early (v0.1). Linux is the verified primary client. Windows WinUI 3
-> and macOS SwiftUI clients are in first-pass validation.
+> and macOS SwiftUI clients are previews under active validation.
 
 ## Showcase
 
@@ -137,7 +137,7 @@ git pull
 scripts/tag-release.sh
 ```
 
-That creates and pushes a tag like `v0.1.0`. GitHub Actions then builds the optimized
+That creates and pushes a tag like `vX.Y.Z`. GitHub Actions then builds the optimized
 Linux, Windows, and macOS assets, publishes a GitHub Release, and uploads checksums.
 
 Package-manager installs (`.deb`, RPM, AUR, Flatpak, distro repos, app stores) are
@@ -193,12 +193,14 @@ To publish it, enable GitHub Pages in the repository settings:
 
 - `src/tailscale/` — pure, unit-tested client + data models (CLI wrapper + LocalAPI socket reader)
 - `src/settings.rs` — tiny XDG config helper for local preferences
-- `src/ui/` — thin libadwaita view layer (`window.rs`, `device_row.rs`, `dialogs.rs`, `help.rs`, CSS)
-- `platform/windows/` — native WinUI 3 shell and Windows parser tests
-- `platform/macos/` — native SwiftPM/SwiftUI shell and macOS packaging scripts
-- `tests/` — parsing and integration tests
+- `src/ui/` — thin libadwaita view layer, with window concerns split under `src/ui/window/`
+- `platform/windows/` — pure C# core, focused WinUI partials, and backend/command tests
+- `platform/macos/` — pure Swift core, focused SwiftUI views/view-model extensions, and tests
+- `shared/` — the cross-platform behavior contract and canonical JSON fixtures
+- `tests/` — Rust parsing and integration tests using the shared fixtures
 
-See `AGENTS.md` for contributor rules, `CONTRIBUTING.md` for how to contribute, and `CHANGELOG.md` for version history.
+See `AGENTS.md` for contributor rules, `shared/README.md` for the behavior/UI contract,
+`CONTRIBUTING.md` for how to contribute, and `CHANGELOG.md` for version history.
 
 ## Contributing
 

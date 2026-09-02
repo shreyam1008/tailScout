@@ -11,11 +11,16 @@ backend wraps the `tailscale` CLI and LocalAPI, which evolve over time.
 ## [Unreleased]
 
 ### Added
+- Added one shared backend contract and canonical parser fixtures used across Rust, C#, and Swift tests.
 - Added Linux, Windows, and macOS memory measurement helpers with configurable baseline failures.
 - Added CI memory smoke tests for the Linux GTK and macOS SwiftUI clients, plus Windows WinUI package/helper validation for local desktop memory checks.
 - Documented runtime footprint baselines and metric differences across platforms.
 
 ### Changed
+- Split the Linux GTK, Windows WinUI, and macOS SwiftUI monoliths into focused modules while preserving behavior.
+- Centralized Taildrop ownership policy in each platform core and made Windows CLI commands independently testable.
+- Aligned native UI terminology, device summaries, section order, and selected-device details across all three operating systems.
+- Removed unfinished Flatpak and Snap manifests that referenced provisional inputs and unsupported host integration.
 - Moved the public product site to `tailscout.shreyam1008.com.np` and aligned canonical, social, sitemap, discovery, manifest, and package metadata URLs.
 - Reduced Linux device-list memory growth by sharing one status snapshot across row callbacks instead of cloning the full status for every row.
 - Clarified runtime footprint baselines, measurement commands, and platform links in README/native docs.

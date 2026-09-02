@@ -1,77 +1,84 @@
-# TailScout — Agent Rules
+# TailScout contributor rules
 
-Rules for AI coding agents and human contributors working on TailScout.
-Read `README.md` for the project overview.
+Read `README.md` for the product overview and `shared/README.md` for the
+cross-platform behavior and UI contract.
 
-## What this is
+## Product shape
 
-A **native Rust GUI for Tailscale**, built with **GTK4 + libadwaita**. Linux first;
-Windows and macOS planned. The goal is a clean, low-RAM, modern desktop client that
-matches or beats Trayscale, and grows as Tailscale adds features.
+TailScout has three native interfaces over the installed Tailscale client:
 
-## Core principles
+- Linux: Rust with GTK4/libadwaita (primary, verified client)
+- Windows: C# with WinUI 3
+- macOS: Swift with SwiftUI
 
-- **Minimal & clean.** Prefer the simplest correct solution. No speculative abstractions.
-- **Native look.** Use libadwaita widgets and patterns. Do not hand-roll custom chrome.
-- **Backend stays pure.** All Tailscale logic lives in `src/tailscale/` and must be
-  unit-testable without a GUI. The `src/ui/` layer is a thin view.
-- **Version-aware.** TailScout reads the daemon version at runtime. When Tailscale adds
-  features, extend the backend, bump the verified version in `CHANGELOG.md`.
-- **Edge cases first.** Daemon down, no peers, offline peers, missing CLI, permission
-  denied — handle them explicitly and surface friendly messages.
+Keep the native interfaces small. Do not introduce Electron, a web view, a heavy
+async runtime, a background service, or cross-language FFI without a concrete need.
 
-## Stack & versions
+## Architecture
 
-| Tool | Version | Notes |
-|---|---|---|
-| Rust | stable (1.96+) | edition 2021 |
-| gtk4-rs | 0.9 | `gtk4` crate, feature `v4_12` |
-| libadwaita | 0.7 | `libadwaita` crate, feature `v1_5` |
-| serde / serde_json | 1 | parsing `tailscale status --json` |
+- Business rules, parsing, validation, and process execution belong in the pure
+  platform cores: `src/tailscale/`, `TailScout.Windows.Core`, and `TailScoutCore`.
+- UI code renders state, collects input, and invokes its core asynchronously.
+- Linux status reads prefer LocalAPI and fall back to the CLI. Mutations use the CLI.
+- Windows and macOS currently use the CLI for both reads and mutations.
+- Shared behavior and canonical parser inputs live in `shared/`. Every platform must
+  test a wire-format change against the same fixture.
+- Keep one concern per file and prefer direct code over speculative abstractions.
 
-Do not add heavy async runtimes. Blocking CLI calls run on worker threads and post
-results back to the GTK main loop via channels.
+## Toolchains
 
-## File structure
+| Target | Toolchain | UI |
+| --- | --- | --- |
+| Linux | stable Rust; MSRV 1.80; edition 2021 | gtk4-rs 0.9, libadwaita 0.7 |
+| Windows | .NET 10 | WinUI 3 / Windows App SDK |
+| macOS | Swift 6, macOS 13+ | SwiftUI |
 
-```
-src/
-├── main.rs            — entry: init adw, build Application, run
-├── app.rs             — Application wiring and top-level state
-├── tailscale/
-│   ├── mod.rs         — TailscaleClient facade (re-exports)
-│   ├── model.rs       — typed data models (serde)
-│   ├── error.rs       — error type
-│   ├── cli.rs         — `tailscale` CLI wrappers (actions + status)
-│   └── localapi.rs    — LocalAPI unix-socket client (reads)
-├── ui/
-│   ├── mod.rs
-│   ├── window.rs      — main window layout
-│   ├── device_row.rs  — device list row widget
-│   └── style.css      — custom CSS
-└── util/
-    └── mod.rs
+Blocking subprocess and socket calls must never run on a UI thread/main actor.
 
-tests/
-└── parsing.rs         — model/parsing tests
+## Repository map
+
+```text
+src/tailscale/                 Rust backend
+src/ui/window.rs               Linux window coordinator
+src/ui/window/                 Focused Linux UI concerns
+platform/windows/
+  TailScout.Windows.Core/      Typed parser and CLI/process adapter
+  TailScout.Windows/           WinUI shell, split by concern
+  TailScout.Windows.Tests/     Core and command-contract tests
+platform/macos/
+  Sources/TailScoutCore/       Typed parser and CLI/process adapter
+  Sources/TailScout/           SwiftUI shell and view model
+  Tests/TailScoutTests/        Core tests
+shared/                        Cross-platform contract and fixtures
+tests/                         Rust backend tests
 ```
 
-### Rules
-- One concern per file. Keep `main.rs` thin.
-- New Tailscale capability = add to `tailscale/` (model + cli/localapi), then surface in `ui/`.
-- Never block the GTK main thread on a subprocess or socket. Use threads + channels.
-- Every backend parsing/transform function gets a test in `tests/`.
+## Coding rules
 
-## Conventions
+- Handle daemon-down, no-peer, offline-peer, missing-CLI, permission, malformed-data,
+  and cancelled-picker paths explicitly.
+- Runtime/IO Rust paths return `Result`; no `unwrap()` or `expect()` outside tests.
+- Use named constants for protocol paths, binary names, and timeouts.
+- Preserve unknown daemon states and tolerate missing or `null` JSON fields.
+- Do not duplicate ownership, Taildrop, sorting, or display fallback policy in UI code.
+- Keep common section order, terminology, device-row facts, and action availability
+  aligned with the UI contract; native controls may differ, product semantics may not.
+- `Cargo.toml` is the release-version source of truth. Keep checked metadata aligned
+  and run `scripts/check-release-truth.py`.
+- Update `CHANGELOG.md` for every user-visible change and whenever the verified
+  Tailscale version changes.
 
-- `cargo fmt` and `cargo clippy` must pass clean before any commit.
-- No `unwrap()`/`expect()` on runtime/IO paths; return `Result` and show errors in the UI.
-  `unwrap()` is acceptable in tests.
-- Named constants over magic strings (socket path, CLI name, refresh interval).
-- Update `CHANGELOG.md` for every user-visible change, including the verified Tailscale version.
+## Required checks
 
-## Testing
+```text
+cargo fmt --all -- --check
+cargo test --locked --all-targets
+cargo clippy --locked --all-targets -- -D warnings
+dotnet test platform/windows/TailScout.Windows.Tests/TailScout.Windows.Tests.csproj -c Release
+dotnet build platform/windows/TailScout.Windows/TailScout.Windows.csproj -c Release -p:Platform=x64
+(cd platform/macos && swift test && swift build -c release)
+python scripts/check-release-truth.py
+```
 
-- Backend logic: unit/integration tests in `tests/` (no GUI needed).
-- Run `cargo test` before confirming any change.
-- GUI changes: at minimum confirm `cargo build` and a manual launch.
+Linux GUI changes also need a Linux build and manual launch. Windows/macOS UI changes
+need a native build and launch on their respective platforms.
