@@ -1,11 +1,14 @@
 # TailScout
 
 A clean, **native desktop GUI for Tailscale**. Linux uses Rust with GTK4 +
-libadwaita; native WinUI 3 and SwiftUI clients live beside it.
+libadwaita; current-source native WinUI 3 and SwiftUI previews live beside it.
 
-No official Linux desktop client exists for Tailscale. TailScout fills that gap: a
-modern, low-footprint window to see your tailnet, connect/disconnect, manage exit
-nodes, and send files over Taildrop — without living in the terminal.
+Tailscale now provides an [official Linux system tray in
+beta](https://tailscale.com/docs/features/client/linux-systray) for common tray
+actions. TailScout is an independent, low-footprint native workbench with a broader
+at-a-glance tailnet view: inspect devices, connect or disconnect, manage accounts and
+exit nodes, run diagnostics, and send or receive files over Taildrop — without using
+the terminal for routine workflows.
 
 **Built native.** TailScout is written in Rust and uses GTK4 + libadwaita — the same
 toolkit GNOME itself uses. No Electron, no web views, no bundled browser engine.

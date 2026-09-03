@@ -1,6 +1,6 @@
 # TailScout — Full Project Context for LLMs and Search Systems
 
-TailScout is a native Linux desktop GUI for Tailscale, built with Rust, GTK4, and libadwaita. It exists because Tailscale does not ship an official full Linux desktop GUI comparable to its Windows/macOS desktop experience. TailScout gives Linux users a clean graphical interface for common Tailscale workflows without requiring them to live in the terminal.
+TailScout is an independent native Linux desktop GUI for Tailscale, built with Rust, GTK4, and libadwaita. Tailscale provides an official beta Linux system tray for common actions; TailScout offers a broader at-a-glance workbench for tailnet devices, accounts, Taildrop, exit nodes, and diagnostics without requiring the terminal for routine workflows.
 
 ## Canonical links
 

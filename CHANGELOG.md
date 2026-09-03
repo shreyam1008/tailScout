@@ -24,6 +24,7 @@ backend wraps the `tailscale` CLI and LocalAPI, which evolve over time.
 - Moved the public product site to `tailscout.shreyam1008.com.np` and aligned canonical, social, sitemap, discovery, manifest, and package metadata URLs.
 - Reduced Linux device-list memory growth by sharing one status snapshot across row callbacks instead of cloning the full status for every row.
 - Clarified runtime footprint baselines, measurement commands, and platform links in README/native docs.
+- Updated public project positioning to acknowledge Tailscale's official beta Linux system tray, distinguish TailScout's broader native workbench scope, and label current-source Windows/macOS clients as previews.
 
 ## [0.1.3] - 2026-06-18
 

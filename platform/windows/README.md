@@ -1,8 +1,9 @@
 # TailScout for Windows
 
-Native Windows shell for TailScout built with C#, WinUI 3, and the Windows App
-SDK. It is intentionally separate from the Linux GTK app so Windows can use
-Fluent controls and Windows packaging without bringing GTK to the platform.
+Native Windows preview shell for TailScout built with C#, WinUI 3, and the
+Windows App SDK. It is intentionally separate from the Linux GTK app so
+Windows can use Fluent controls and Windows packaging without bringing GTK to
+the platform.
 
 ## Requirements
 
