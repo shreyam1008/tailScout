@@ -10,6 +10,9 @@ backend wraps the `tailscale` CLI and LocalAPI, which evolve over time.
 
 ## [Unreleased]
 
+### Documentation
+- Clarify that TailScout remains an active standalone app; link ProtoPeek as an additional package offering Tailscale workflows.
+
 ### Added
 - Added one shared backend contract and canonical parser fixtures used across Rust, C#, and Swift tests.
 - Added Linux, Windows, and macOS memory measurement helpers with configurable baseline failures.

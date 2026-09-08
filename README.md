@@ -24,6 +24,8 @@ it works correctly and KDE's `breeze-gtk` package helps it blend in.
 > Status: early (v0.1). Linux is the verified primary client. Windows WinUI 3
 > and macOS SwiftUI clients are previews under active validation.
 
+TailScout remains an active standalone app. Tailscale workflows are also available in the full [ProtoPeek package](https://protopeek.shreyam1008.com.np/) if you want a broader workbench.
+
 ## Showcase
 
 [![TailScout showcase video](docs/assets/tailscout-showcase-poster.png)](docs/assets/tailscout-showcase.mp4)
