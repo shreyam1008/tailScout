@@ -9,5 +9,10 @@ continue to be built and distributed through GitHub.
 Keep `docs/404.html` so unknown URLs return HTTP 404 instead of a fallback home
 page. Keep canonical metadata pointed at the custom domain.
 
-Migration rollback: the existing GitHub Pages source is `main:/docs`; restore the
-host's CNAME to `shreyam1008.github.io` with DNS-only mode if rollback is needed.
+GitHub Pages hosting was disabled on 9 September 2026. The former publishing
+source was `main:/docs`.
+
+
+Rollback now requires re-enabling and successfully deploying GitHub Pages before
+restoring its DNS target; changing DNS alone is not sufficient. Retiring GitHub
+Pages also retires the old github.io-hosted URLs and redirects.
