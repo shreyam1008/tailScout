@@ -2,6 +2,14 @@
 
 11 September 2026: **TailScout v0.1.4.0 passed Partner Center package validation and is saved in Submission 1; not submitted or published.** Properties, free pricing and age ratings are complete. English listing text and certification notes are saved. Screenshots and interactive Windows acceptance are pending. ProtoPeek is in certification. TailScout remains an active standalone product, even though related Tailscale workflows are available in ProtoPeek.
 
+## Privacy-safe acceptance checkpoint
+
+Native Windows launch and automatic refresh succeeded after the desktop became available. The app read the installed Tailscale client and displayed its current connection and device state. That screen contained real tailnet information; the owner objected to exposing it. **No capture of that screen was saved as a Store asset or uploaded to Microsoft.** Do not publish real account names, device names, addresses or tailnet identifiers.
+
+The live-data app process was closed without changing the Tailscale connection. A separate process was launched with a temporary process-only PATH excluding the installed client. The real released app showed its missing-client guidance and no saved accounts, devices or tailnet details. System/user environment settings and the Tailscale service were not changed. This verifies the normal missing-client state; an invalid explicit binary override is a separate path and did not show the same guidance.
+
+Capture subsequently failed with `IGraphicsCaptureItemInterop.CreateForMonitor` (0x80070057); a fresh-window retry returned `GetCursorPos failed: Access is denied` (0x80070005). No publishable PNG was captured. Keep screenshots and submission pending rather than using the private screen or a synthetic replacement. Connected actions that would alter the owner's network remain untested.
+
 ## Reserved identity
 
 - Product ID: `9NXWT9JB492V`
