@@ -17,7 +17,7 @@ The reservation page requires submission within three months (11 December 2026).
 
 The current Windows app is native C#/WinUI 3 with .NET 10, `WindowsPackageType=None` and a self-contained Windows App SDK. The source explicitly labels Windows a preview. The published v0.1.3 release contains `tailscout-v0.1.3-windows-x64-winui.zip` (87,739,491 bytes); GitHub reports SHA-256 `0076914303ed97176e4c2f68632aaa90643a443b32f1de15d92269eb7b1d1229`. This inventory is not a fresh ZIP download or runtime test.
 
-Attempted Windows core tests on the preparation host failed before compilation with NETSDK1045: installed SDK 9.0.317 cannot target net10.0. Install/use a .NET 10 SDK or run the existing Windows CI before claiming a passing test. Do not lower the target framework to make packaging appear successful.
+The initial NETSDK1045 blocker was resolved using official .NET SDK 10.0.401 in an isolated local tools directory, leaving the system SDK unchanged. Windows core tests passed (4 tests), and a Release win-x64 self-contained native publish succeeded into `dist/store/native-x64`. This proves compilation and core tests, not packaged WinUI launch or Store acceptance; those remain pending.
 
 ## Packaging and acceptance work
 
