@@ -16,7 +16,7 @@ public sealed partial class MainWindow : Window
     private bool busy;
     private bool updatingAdvertiseToggle;
 
-    public MainWindow()
+    public MainWindow(bool skipStartupRefresh = false)
     {
         InitializeComponent();
         Title = "TailScout";
@@ -24,7 +24,7 @@ public sealed partial class MainWindow : Window
         ProfilesCombo.ItemsSource = profiles;
         ExitNodeCombo.ItemsSource = exitNodes;
 
-        if (IsStartupRefreshDisabled())
+        if (skipStartupRefresh || IsStartupRefreshDisabled())
         {
             ShowInfo("Startup refresh skipped.", InfoBarSeverity.Informational);
         }

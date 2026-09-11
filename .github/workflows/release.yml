@@ -125,11 +125,18 @@ jobs:
             -p:WindowsAppSDKSelfContained=true `
             -o dist/windows/TailScoutMemory
 
+      - name: Test published WinUI startup without a tailnet
+        shell: pwsh
+        run: ./platform/windows/scripts/Test-TailScoutStartup.ps1 -Executable ./dist/windows/TailScoutMemory/TailScout.Windows.exe
+
       - name: Validate Windows memory helper
         shell: pwsh
         run: |
           if (!(Test-Path .\dist\windows\TailScoutMemory\TailScout.Windows.exe)) {
             throw "Published TailScout.Windows.exe was not found."
+          }
+          if (!(Test-Path .\dist\windows\TailScoutMemory\TailScout.Windows.pri)) {
+            throw "Published WinUI resource index is missing; MainWindow cannot load."
           }
           $errors = $null
           [System.Management.Automation.PSParser]::Tokenize(

@@ -10,6 +10,8 @@ backend wraps the `tailscale` CLI and LocalAPI, which evolve over time.
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-09-11
+
 ### Fixed
 - Preserve the compiled WinUI resource index in Windows publish output by enabling MSIX tooling. A publish without the resource index could crash while loading the main window.
 

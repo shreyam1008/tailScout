@@ -1,0 +1,9 @@
+TailScout privacy notice — 11 September 2026
+
+TailScout is a local desktop app maintained by Shreyam Adhikari (shreyam1008). It does not require a separate TailScout account.
+
+The app invokes the installed Tailscale client to display device names, network addresses, account information, connection state and diagnostics. Actions such as connection changes and file transfers are performed through Tailscale. Tailscale operates its own services under its own privacy policy; TailScout is independent of Tailscale Inc.
+
+Files are read or written when you choose Taildrop send or receive actions. Diagnostics may include device or network information. The developer does not operate a TailScout service that receives your tailnet information or files. Microsoft Store handles Store installation and updates under Microsoft policies. Opening external help or support links contacts those websites.
+
+Removing TailScout does not remove the separately installed Tailscale client, its account, or files you transferred. Do not post private tailnet information or credentials in public support reports. Support and privacy questions: https://github.com/shreyam1008/tailScout/issues
