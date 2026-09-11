@@ -1,6 +1,6 @@
 # Microsoft Store preparation
 
-11 September 2026: **TailScout v0.1.4.0 passed Partner Center package validation and is saved in Submission 1; not submitted or published.** Properties and free pricing are complete. Screenshots, interactive Windows acceptance and remaining listing/rating fields are pending. ProtoPeek is in certification. TailScout remains an active standalone product, even though related Tailscale workflows are available in ProtoPeek.
+11 September 2026: **TailScout v0.1.4.0 passed Partner Center package validation and is saved in Submission 1; not submitted or published.** Properties, free pricing and age ratings are complete. English listing text and certification notes are saved. Screenshots and interactive Windows acceptance are pending. ProtoPeek is in certification. TailScout remains an active standalone product, even though related Tailscale workflows are available in ProtoPeek.
 
 ## Reserved identity
 
@@ -19,6 +19,8 @@ The reservation page requires submission within three months (11 December 2026).
 The corrected [v0.1.4 release](https://github.com/shreyam1008/tailScout/releases/tag/v0.1.4) is published. [Release CI 34610604943](https://github.com/shreyam1008/tailScout/actions/runs/34610604943) passed across Windows, macOS and Linux, including the Windows `--startup-check` which constructs MainWindow without opening a window or contacting a tailnet. Four Windows core tests also passed locally. This verifies WinUI resource loading; interactive and connected-tailnet behavior remain separate acceptance checks.
 
 [Store workflow 34611135978](https://github.com/shreyam1008/tailScout/actions/runs/34611135978) automatically consumed that release, verified its asset digest and produced the validated `TailScout_0.1.4.0_x64.msix`. SHA-256: `720cb0014c571493a39da8726457d7e29ef9f908a0a2e9a45e21acad4c1b2992`. The downloaded package matched the receipt and passed Partner Center validation. Desktop availability is selected; future device families are disabled. The upload job was deliberately skipped.
+
+The exact CI package was also unpacked locally and development-registered, upgrading the earlier test registration from 0.1.3.0 to 0.1.4.0 with Status Ok. Its `--startup-check` passed. It remains registered for interactive acceptance; this does not establish Store-signed install/update/uninstall behavior. The owner saved the IARC declaration and the dashboard confirms age ratings Complete. Native launch was retried after the owner's browser interaction and still returned access denied.
 
 ### Earlier diagnostic evidence (superseded by v0.1.4 above)
 
