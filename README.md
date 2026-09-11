@@ -26,7 +26,7 @@ it works correctly and KDE's `breeze-gtk` package helps it blend in.
 
 TailScout remains an active standalone app. Tailscale workflows are also available in the full [ProtoPeek package](https://protopeek.shreyam1008.com.np/) if you want a broader workbench.
 
-Microsoft Store: the TailScout name is reserved. [Windows packaging and acceptance](docs/microsoft-store.md) remain in preparation; there is no Store download yet.
+Microsoft Store: v0.1.4.0 passed package validation in the first submission draft. [Windows screenshots, interactive acceptance and ratings](docs/microsoft-store.md) remain; there is no Store download yet. Stable releases now automatically produce validated MSIX artifacts; API uploads are disabled pending account setup.
 
 ## Showcase
 
