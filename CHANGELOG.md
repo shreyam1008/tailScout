@@ -10,6 +10,12 @@ backend wraps the `tailscale` CLI and LocalAPI, which evolve over time.
 
 ## [Unreleased]
 
+### Fixed
+- Preserve the compiled WinUI resource index in Windows publish output by enabling MSIX tooling. A publish without the resource index could crash while loading the main window.
+
+### Distribution
+- Add verified-input Windows MSIX packaging, original-logo assets, release-driven artifact automation, and an optional Store upload job that preserves existing drafts. First publication and Entra credentials remain prerequisites for automatic uploads.
+
 ### Documentation
 - Clarify that TailScout remains an active standalone app; link ProtoPeek as an additional package offering Tailscale workflows.
 

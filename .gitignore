@@ -12,3 +12,4 @@ Cargo.lock.orig
 
 # Scratch space
 /temp
+/.local/

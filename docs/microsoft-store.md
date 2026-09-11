@@ -1,10 +1,11 @@
 # Microsoft Store preparation
 
-11 September 2026: **TailScout reserved as a separate MSIX app; not submitted or published.** ProtoPeek is the first Store submission in progress. TailScout remains an active standalone product, even though related Tailscale workflows are available in ProtoPeek.
+11 September 2026: **TailScout has a Store draft and validated local MSIX candidate; not submitted or published.** ProtoPeek is in certification. TailScout remains an active standalone product, even though related Tailscale workflows are available in ProtoPeek.
 
 ## Reserved identity
 
 - Product ID: `9NXWT9JB492V`
+- Submission 1: `1152921505701871799`
 - Package name: `shreyam1008.TailScout`
 - Publisher: `CN=56C87ED7-40E5-4525-B1C3-5F8CD5E02720`
 - Publisher display: `shreyam1008`
@@ -21,6 +22,10 @@ The initial NETSDK1045 blocker was resolved using official .NET SDK 10.0.401 in 
 
 ## Packaging and acceptance work
 
+The local candidate passed MakeAppx and development registration (Status Ok, version 0.1.3.0). It uses the existing SVG logo rasterized into `packaging/windows/store/logo-512.png`; the source SVG is unchanged. The native publish initially crashed while loading MainWindow because `TailScout.Windows.pri` was missing. `EnableMsixTooling=true` restores that file in publish output. The public v0.1.3 ZIP also lacks it, so do not submit that unchanged release. The candidate includes current source plus the fix; a new stable release and post-fix native launch verification are still required.
+
+Native computer control subsequently returned `GetCursorPos failed: Access is denied`. The owner has been asked to restore an unlocked, connected desktop. Screenshots and post-fix interactive acceptance remain pending; development registration is not evidence that the main window launches.
+
 1. Publish a stable Windows x64 layout using .NET 10. Keep every runtime and WinUI dependency; a single copied executable is insufficient.
 2. Add an MSIX manifest using the assigned identity, Windows.Desktop and the native `TailScout.Windows.exe` entry point. Validate packaged WinUI bootstrap/resource loading rather than assuming the unpackaged ZIP works unchanged.
 3. Rasterize the existing `packaging/icons/hicolor/scalable/apps/dev.shre.TailScout.svg` for Store sizes without redrawing the branding. Use actual Windows screenshots, not the Linux showcase video/poster.
@@ -35,5 +40,7 @@ Proposed short description: **A native Windows workbench for your installed Tail
 ## Automation
 
 Follow ProtoPeek's published-stable-release package lane after Windows acceptance. CI should build MSIX and retain checksums/receipts. Store upload is a separate stage requiring Partner Center Entra API access and initial submission setup; verified Microsoft-account access alone is insufficient. Never claim automatic publishing from the presence of an artifact workflow.
+
+Implemented `.github/workflows/store.yml`: stable release and release-workflow completion triggers, GitHub asset digest verification, required WinUI PRI/runtime files, executable version check, MSIX validation and retained receipt. Completion triggers cover releases created using GitHub's built-in token. Upload is enabled only with repository variable `STORE_UPLOAD_ENABLED=true` and environment `microsoft-store` secrets `STORE_TENANT_ID`, `STORE_SELLER_ID`, `STORE_CLIENT_ID`, `STORE_CLIENT_SECRET`. The upload preflight requires a published first submission and refuses to replace an existing draft. Credentials are not yet configured.
 
 References: [MSIX requirements](https://learn.microsoft.com/en-us/windows/apps/publish/publish-your-app/msix/app-package-requirements), [Store CLI](https://learn.microsoft.com/en-us/windows/apps/publish/msstore-dev-cli/overview), [Windows source notes](../platform/windows/README.md).
