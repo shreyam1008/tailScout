@@ -37,11 +37,3 @@ parts:
 apps:
   tailscout:
     command: bin/tailscout
-    plugs:
-      - network
-      - home
-      - desktop
-      - desktop-legacy
-      - wayland
-      - x11
-      - opengl

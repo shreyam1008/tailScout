@@ -1,0 +1,105 @@
+name: Publish signed APT
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing stable release with a verified Debian package
+        required: true
+        default: v0.1.4
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tailscout-apt
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TAG: ${{ inputs.tag }}
+      APT_SIGNING_KEY_ID: ${{ vars.APT_SIGNING_KEY_ID }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Download and verify immutable release package
+        run: |
+          set -euo pipefail
+          [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          mkdir apt-dist
+          asset="tailscout_${TAG#v}_amd64.deb"
+          gh release download "$TAG" --pattern "$asset" --pattern "$asset.sha256" --dir apt-dist
+          cd apt-dist
+          sha256sum --strict --check "$asset.sha256"
+          test "$(dpkg-deb -f "$asset" Package)" = tailscout
+          test "$(dpkg-deb -f "$asset" Version)" = "${TAG#v}"
+          test "$(dpkg-deb -f "$asset" Architecture)" = amd64
+      - name: Sign repository with persistent key
+        env:
+          APT_SIGNING_PRIVATE_KEY: ${{ secrets.APT_SIGNING_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$APT_SIGNING_PRIVATE_KEY"
+          [[ "$APT_SIGNING_KEY_ID" =~ ^[A-F0-9]{40}$ ]]
+          export GNUPGHOME="$RUNNER_TEMP/apt-gnupg"
+          install -d -m 700 "$GNUPGHOME"
+          printf '%s' "$APT_SIGNING_PRIVATE_KEY" | gpg --batch --import
+          bash scripts/build-apt-repo.sh docs/apt apt-dist
+      - name: Verify authenticated install, upgrade and removal
+        run: |
+          set -euo pipefail
+          sudo install -m 644 docs/apt/key.gpg /usr/share/keyrings/tailscout-test.gpg
+          echo "deb [signed-by=/usr/share/keyrings/tailscout-test.gpg] file:$GITHUB_WORKSPACE/docs/apt stable main" | sudo tee /etc/apt/sources.list.d/tailscout-test.list
+          sudo apt-get -o APT::Update::Error-Mode=any update
+          sudo apt-get install -y "tailscout=${TAG#v}"
+          test "$(dpkg-query -W -f='${Version}' tailscout)" = "${TAG#v}"
+          ldd /usr/bin/tailscout > /tmp/tailscout-ldd
+          ! grep -q 'not found' /tmp/tailscout-ldd
+          sudo apt-get remove -y tailscout
+          test ! -e /usr/bin/tailscout
+          # Test dpkg's upgrade path with a lower, synthetic package version.
+          dpkg-deb -R "apt-dist/tailscout_${TAG#v}_amd64.deb" /tmp/tailscout-old
+          sed -i "s/^Version: .*/Version: ${TAG#v}~lifecycle-test/" /tmp/tailscout-old/DEBIAN/control
+          dpkg-deb --build --root-owner-group /tmp/tailscout-old /tmp/tailscout-old.deb
+          sudo dpkg -i /tmp/tailscout-old.deb
+          sudo apt-get install -y "tailscout=${TAG#v}"
+          test "$(dpkg-query -W -f='${Version}' tailscout)" = "${TAG#v}"
+          sudo apt-get purge -y tailscout
+          test ! -e /usr/bin/tailscout
+      - name: Publish signed metadata and packages
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/apt
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "distribution: publish signed TailScout APT for $TAG"
+          git pull --rebase origin main
+          git push origin HEAD:main
+      - name: Verify anonymous HTTPS installation
+        run: |
+          set -euo pipefail
+          base=https://tailscout.shreyam1008.com.np/apt
+          for attempt in $(seq 1 30); do
+            if curl -fsS "$base/dists/stable/main/binary-amd64/Packages" -o /tmp/tailscout-Packages && grep -qx "Version: ${TAG#v}" /tmp/tailscout-Packages; then break; fi
+            sleep 10
+          done
+          curl -fsS "$base/key.asc" -o /tmp/tailscout-key.asc
+          fingerprint=$(gpg --show-keys --with-colons /tmp/tailscout-key.asc | awk -F: '$1 == "fpr" {print $10; exit}')
+          test "$fingerprint" = "$APT_SIGNING_KEY_ID"
+          sudo install -m 644 /tmp/tailscout-key.asc /usr/share/keyrings/tailscout.asc
+          sudo rm /etc/apt/sources.list.d/tailscout-test.list
+          echo "deb [signed-by=/usr/share/keyrings/tailscout.asc] $base stable main" | sudo tee /etc/apt/sources.list.d/tailscout.list
+          for attempt in $(seq 1 18); do
+            if sudo apt-get -o APT::Update::Error-Mode=any update; then break; fi
+            sleep 10
+          done
+          sudo apt-get -o APT::Update::Error-Mode=any update
+          sudo apt-get install -y "tailscout=${TAG#v}"
+          test "$(dpkg-query -W -f='${Version}' tailscout)" = "${TAG#v}"
+          sudo apt-get purge -y tailscout
