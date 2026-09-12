@@ -28,7 +28,7 @@
   Access-Control-Allow-Origin: *
   Content-Type: application/json; charset=utf-8
 
-/.well-known/agent-skills/*
+/.well-known/agent-skills/tailscout-docs.md
   Content-Type: text/markdown; charset=utf-8
 
 /auth.md
