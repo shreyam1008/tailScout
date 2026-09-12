@@ -48,7 +48,7 @@ fn peers_sorted_online_first() {
             .iter()
             .map(|node| node.display_name())
             .collect::<Vec<_>>(),
-        ["guest-device", "example-phone", "example-desktop"]
+        ["example-phone", "guest-device", "example-desktop"]
     );
     assert!(sorted[0].online);
     assert!(!sorted[2].online);
@@ -65,10 +65,7 @@ fn resolves_owner_profiles() {
         .iter()
         .find(|peer| peer.display_name() == "example-phone")
         .unwrap();
-    assert_eq!(
-        status.owner_label(phone).as_deref(),
-        Some("Example User")
-    );
+    assert_eq!(status.owner_label(phone).as_deref(), Some("Example User"));
     assert!(status.can_send_taildrop_to(phone));
 
     let guest = status

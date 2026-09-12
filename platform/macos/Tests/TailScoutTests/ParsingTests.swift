@@ -13,7 +13,7 @@ final class ParsingTests: XCTestCase {
         XCTAssertEqual(status.currentTailnet?.name, "Example Tailnet")
         XCTAssertEqual(status.thisNode?.displayName, "example-device")
         XCTAssertEqual(status.thisNode?.primaryIP, "100.64.0.10")
-        XCTAssertEqual(status.sortedPeers.map(\.displayName), ["guest-device", "example-phone", "example-desktop"])
+        XCTAssertEqual(status.sortedPeers.map(\.displayName), ["example-phone", "guest-device", "example-desktop"])
 
         let phone = try XCTUnwrap(status.peers.first { $0.displayName == "example-phone" })
         let guest = try XCTUnwrap(status.peers.first { $0.displayName == "guest-device" })

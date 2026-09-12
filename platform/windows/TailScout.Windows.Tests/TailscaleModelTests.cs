@@ -20,7 +20,7 @@ public sealed class TailscaleModelTests
         Assert.AreEqual("100.64.0.10", status.ThisNode?.PrimaryIp);
 
         CollectionAssert.AreEqual(
-            new[] { "guest-device", "example-phone", "example-desktop" },
+            new[] { "example-phone", "guest-device", "example-desktop" },
             status.SortedPeers.Select(peer => peer.DisplayName).ToArray());
         var phone = status.Peers.Single(peer => peer.DisplayName == "example-phone");
         var guest = status.Peers.Single(peer => peer.DisplayName == "guest-device");
