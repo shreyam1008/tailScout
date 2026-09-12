@@ -38,6 +38,10 @@ classic confinement because it must invoke the user's Tailscale CLI and LocalAPI
 on the host; Canonical review and a maintainer smoke test are required before a
 Snap Store release is advertised.
 
+The v0.1.4 candidate is attached to the [GitHub release](https://github.com/shreyam1008/tailScout/releases/tag/v0.1.4) with its
+[SHA-256 receipt](https://github.com/shreyam1008/tailScout/releases/download/v0.1.4/tailscout_0.1.4_amd64.snap.sha256).
+It was built by the hosted [Snap workflow run](https://github.com/shreyam1008/tailScout/actions/runs/34677309505).
+
 ```sh
 snapcraft --destructive-mode
 snap install --dangerous ./tailscout_0.1.4_amd64.snap
