@@ -13,16 +13,16 @@ const SAMPLE_PROFILES: &str = include_str!("../shared/fixtures/profiles.json");
 #[test]
 fn parses_top_level_fields() {
     let status = Status::from_json(SAMPLE_STATUS).expect("should parse");
-    assert_eq!(status.version, "1.98.4-t9e69045b2");
+    assert_eq!(status.version, "1.98.4-example");
     assert_eq!(status.client_version, "1.98.4");
-    assert_eq!(status.display_version(), "1.98.4-t9e69045b2");
+    assert_eq!(status.display_version(), "1.98.4-example");
     assert!(status.tun);
     assert_eq!(status.backend_state, BackendState::Running);
     assert!(status.backend_state.is_running());
-    assert_eq!(status.magic_dns_suffix, "tail9e520a.ts.net");
+    assert_eq!(status.magic_dns_suffix, "example.ts.net");
     assert_eq!(status.health, vec!["relay warning"]);
     let tailnet = status.current_tailnet.expect("tailnet present");
-    assert_eq!(tailnet.name, "jkp.org.in");
+    assert_eq!(tailnet.name, "Example Tailnet");
     assert!(tailnet.magic_dns_enabled);
 }
 
@@ -30,11 +30,11 @@ fn parses_top_level_fields() {
 fn parses_self_node() {
     let status = Status::from_json(SAMPLE_STATUS).unwrap();
     let me = status.this_node.expect("self present");
-    assert_eq!(me.display_name(), "shre");
-    assert_eq!(me.primary_ip(), Some("100.100.8.31")); // prefers IPv4
-    assert_eq!(me.cli_target(), Some("100.100.8.31"));
-    assert_eq!(me.clean_dns_name(), "shre.tail9e520a.ts.net");
-    assert_eq!(me.user_id, 110841043178303);
+    assert_eq!(me.display_name(), "example-device");
+    assert_eq!(me.primary_ip(), Some("100.64.0.10")); // prefers IPv4
+    assert_eq!(me.cli_target(), Some("100.64.0.10"));
+    assert_eq!(me.clean_dns_name(), "example-device.example.ts.net");
+    assert_eq!(me.user_id, 1001);
 }
 
 #[test]
@@ -48,7 +48,7 @@ fn peers_sorted_online_first() {
             .iter()
             .map(|node| node.display_name())
             .collect::<Vec<_>>(),
-        ["guest-phone", "pixel", "dev-pc"]
+        ["guest-device", "example-phone", "example-desktop"]
     );
     assert!(sorted[0].online);
     assert!(!sorted[2].online);
@@ -63,18 +63,18 @@ fn resolves_owner_profiles() {
     let phone = status
         .peers
         .iter()
-        .find(|peer| peer.display_name() == "pixel")
+        .find(|peer| peer.display_name() == "example-phone")
         .unwrap();
     assert_eq!(
         status.owner_label(phone).as_deref(),
-        Some("Shreyam Adhikari")
+        Some("Example User")
     );
     assert!(status.can_send_taildrop_to(phone));
 
     let guest = status
         .peers
         .iter()
-        .find(|peer| peer.display_name() == "guest-phone")
+        .find(|peer| peer.display_name() == "guest-device")
         .unwrap();
     assert!(guest.can_receive_taildrop());
     assert!(!status.can_send_taildrop_to(guest));

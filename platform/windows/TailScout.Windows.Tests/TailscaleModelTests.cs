@@ -11,26 +11,26 @@ public sealed class TailscaleModelTests
     {
         var status = TailscaleStatus.Parse(Fixture("status.json"));
 
-        Assert.AreEqual("1.98.4-t9e69045b2", status.Version);
-        Assert.AreEqual("1.98.4-t9e69045b2", status.DisplayVersion);
+        Assert.AreEqual("1.98.4-example", status.Version);
+        Assert.AreEqual("1.98.4-example", status.DisplayVersion);
         Assert.AreEqual("Connected", status.StatusLabel);
         Assert.IsTrue(status.Tun);
-        Assert.AreEqual("jkp.org.in", status.CurrentTailnet?.Name);
-        Assert.AreEqual("shre", status.ThisNode?.DisplayName);
-        Assert.AreEqual("100.100.8.31", status.ThisNode?.PrimaryIp);
+        Assert.AreEqual("Example Tailnet", status.CurrentTailnet?.Name);
+        Assert.AreEqual("example-device", status.ThisNode?.DisplayName);
+        Assert.AreEqual("100.64.0.10", status.ThisNode?.PrimaryIp);
 
         CollectionAssert.AreEqual(
-            new[] { "guest-phone", "pixel", "dev-pc" },
+            new[] { "guest-device", "example-phone", "example-desktop" },
             status.SortedPeers.Select(peer => peer.DisplayName).ToArray());
-        var phone = status.Peers.Single(peer => peer.DisplayName == "pixel");
-        var guest = status.Peers.Single(peer => peer.DisplayName == "guest-phone");
+        var phone = status.Peers.Single(peer => peer.DisplayName == "example-phone");
+        var guest = status.Peers.Single(peer => peer.DisplayName == "guest-device");
         Assert.AreEqual("Android", phone.OsLabel);
         Assert.AreEqual("peer-phone", phone.StableKey);
         Assert.IsTrue(status.CanSendTaildropTo(phone));
         Assert.IsTrue(guest.CanReceiveTaildrop);
         Assert.IsFalse(status.CanSendTaildropTo(guest));
-        Assert.IsTrue(status.Peers.Single(peer => peer.DisplayName == "dev-pc").IsSubnetRouter);
-        Assert.AreEqual("Shreyam Adhikari", status.OwnerLabel(phone));
+        Assert.IsTrue(status.Peers.Single(peer => peer.DisplayName == "example-desktop").IsSubnetRouter);
+        Assert.AreEqual("Example User", status.OwnerLabel(phone));
     }
 
     [TestMethod]

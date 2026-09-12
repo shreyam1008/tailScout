@@ -1,69 +1,69 @@
 {
-  "Version": "1.98.4-t9e69045b2",
+  "Version": "1.98.4-example",
   "ClientVersion": "1.98.4",
   "TUN": true,
   "BackendState": "Running",
-  "MagicDNSSuffix": "tail9e520a.ts.net",
+  "MagicDNSSuffix": "example.ts.net",
   "CurrentTailnet": {
-    "Name": "jkp.org.in",
-    "MagicDNSSuffix": "tail9e520a.ts.net",
+    "Name": "Example Tailnet",
+    "MagicDNSSuffix": "example.ts.net",
     "MagicDNSEnabled": true
   },
   "Health": ["relay warning"],
   "User": {
-    "110841043178303": {
-      "ID": 110841043178303,
-      "LoginName": "shreyama@jkp.org.in",
-      "DisplayName": "Shreyam Adhikari",
+    "1001": {
+      "ID": 1001,
+      "LoginName": "owner@example.invalid",
+      "DisplayName": "Example User",
       "ProfilePicURL": "https://example.invalid/photo.png"
     },
-    "999": {
-      "ID": 999,
+    "2002": {
+      "ID": 2002,
       "LoginName": "guest@example.invalid",
       "DisplayName": "Guest User"
     }
   },
   "Self": {
     "ID": "self-1",
-    "HostName": "shre",
-    "DNSName": "shre.tail9e520a.ts.net.",
+    "HostName": "example-device",
+    "DNSName": "example-device.example.ts.net.",
     "OS": "linux",
-    "TailscaleIPs": ["100.100.8.31", "fd7a:115c:a1e0::1"],
+    "TailscaleIPs": ["100.64.0.10", "2001:db8::1"],
     "Online": true,
-    "UserID": 110841043178303,
+    "UserID": 1001,
     "ExitNodeOption": true
   },
   "Peer": {
     "key1": {
       "ID": "peer-win",
-      "HostName": "dev-pc",
-      "DNSName": "dev-pc.tail9e520a.ts.net.",
+      "HostName": "example-desktop",
+      "DNSName": "example-desktop.example.ts.net.",
       "OS": "windows",
-      "TailscaleIPs": ["100.100.8.30"],
-      "AllowedIPs": ["100.100.8.30/32", "10.10.0.0/16"],
+      "TailscaleIPs": ["100.64.0.11"],
+      "AllowedIPs": ["100.64.0.11/32", "192.0.2.0/24"],
       "Online": false,
       "RxBytes": 2048,
       "TxBytes": 1024
     },
     "key2": {
       "ID": "peer-phone",
-      "HostName": "pixel",
-      "DNSName": "pixel.tail9e520a.ts.net.",
+      "HostName": "example-phone",
+      "DNSName": "example-phone.example.ts.net.",
       "OS": "android",
-      "TailscaleIPs": ["100.100.8.32"],
+      "TailscaleIPs": ["100.64.0.12"],
       "Online": true,
       "ExitNodeOption": true,
       "TaildropTarget": 3,
-      "UserID": 110841043178303
+      "UserID": 1001
     },
     "key3": {
       "ID": "peer-guest",
-      "HostName": "guest-phone",
+      "HostName": "guest-device",
       "OS": "iOS",
-      "TailscaleIPs": ["100.100.8.33"],
+      "TailscaleIPs": ["100.64.0.13"],
       "Online": true,
       "TaildropTarget": 4,
-      "UserID": 999
+      "UserID": 2002
     }
   }
 }
