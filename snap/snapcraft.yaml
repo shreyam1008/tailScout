@@ -1,0 +1,48 @@
+name: tailscout
+base: core24
+adopt-info: tailscout
+summary: Native Tailscale GUI for Linux
+description: |
+  TailScout is a lightweight GTK4/libadwaita desktop client for the Tailscale
+  CLI and LocalAPI. Inspect devices, accounts, routes, exit nodes and Taildrop
+  from a native Linux window while keeping tailnet data on the local machine.
+grade: stable
+confinement: classic
+license: MIT
+icon: snap/gui/tailscout.svg
+
+parts:
+  tailscout:
+    plugin: rust
+    source: .
+    build-packages:
+      - pkg-config
+      - libgtk-4-dev
+      - libadwaita-1-dev
+    stage-packages:
+      - libgtk-4-1
+      - libadwaita-1-0
+    override-build: |
+      craftctl default
+      version="$(sed -n 's/^version = \"\(.*\)\"/\1/p' Cargo.toml | head -n 1)"
+      test -n "$version"
+      craftctl set version="$version"
+      install -Dm644 packaging/dev.shre.TailScout.desktop \
+        "$CRAFT_PART_INSTALL/usr/share/applications/dev.shre.TailScout.desktop"
+      install -Dm644 packaging/icons/hicolor/scalable/apps/dev.shre.TailScout.svg \
+        "$CRAFT_PART_INSTALL/usr/share/icons/hicolor/scalable/apps/dev.shre.TailScout.svg"
+      install -Dm644 packaging/dev.shre.TailScout.metainfo.xml \
+        "$CRAFT_PART_INSTALL/usr/share/metainfo/dev.shre.TailScout.metainfo.xml"
+
+apps:
+  tailscout:
+    command: bin/tailscout
+    desktop: snap/gui/tailscout.desktop
+    plugs:
+      - network
+      - home
+      - desktop
+      - desktop-legacy
+      - wayland
+      - x11
+      - opengl

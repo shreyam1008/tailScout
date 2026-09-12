@@ -20,6 +20,15 @@ Key facts:
 - Licensed under MIT.
 - Linux is the verified primary client; native Windows and macOS preview clients are included.
 
+## Agent discovery
+
+- API catalog: https://tailscout.shreyam1008.com.np/.well-known/api-catalog
+- OpenAPI document: https://tailscout.shreyam1008.com.np/openapi.json
+- ARD capability manifest: https://tailscout.shreyam1008.com.np/.well-known/ai-catalog.json
+- MCP Server Card: https://tailscout.shreyam1008.com.np/.well-known/mcp/server-card.json
+- Auth metadata: https://tailscout.shreyam1008.com.np/auth.md (anonymous documentation site; no hosted OAuth)
+- Agent Skill index: https://tailscout.shreyam1008.com.np/.well-known/agent-skills/index.json
+
 Common search phrases:
 
 - Tailscale GUI for Linux

@@ -1,21 +1,48 @@
 # Packaging status
 
-GitHub Releases are TailScout's only supported distribution channel today. The
-release workflow builds Linux, Windows, and macOS archives and publishes SHA-256
-checksums. The Linux installer consumes that release archive.
+GitHub Releases remain the source of truth for TailScout. The release workflow
+builds Linux, Windows, and macOS archives, a Debian package, a classic Snap
+candidate, and SHA-256 checksums. The Linux installer consumes the release
+archive, while Debian and Snap users can use the matching package artifact.
 
 This directory contains the Linux desktop entry, icon, and AppStream metadata used
 by the supported archive. Keep them aligned with `Cargo.toml` and validate them in
 CI through `scripts/check-release-truth.py`.
 
-Do not commit speculative AUR, Flatpak, Snap, WinGet, Homebrew, or app-store
-manifests. Add a packaging target only when it:
+Do not add speculative AUR, Flatpak, WinGet, Homebrew, or app-store manifests.
+Add a packaging target only when it:
 
 1. builds from a clean checkout;
 2. can reach the host Tailscale CLI or LocalAPI safely;
 3. is exercised in CI or by a documented release check; and
 4. contains no provisional versions, hashes, generated-file references, or paths.
 
-Flatpak and strict Snap need an explicit host-daemon/CLI integration design before
-they can satisfy those conditions. Track that work as an issue rather than keeping
-non-runnable manifests in the main branch.
+## Debian
+
+The tag workflow runs `scripts/package-deb.sh <version>` after the verified Linux
+build. The package installs the native GTK4 application, desktop entry, icon,
+AppStream metadata, license, and documentation under `/usr`. It depends on the
+distribution GTK4/libadwaita runtime and suggests the separately installed
+`tailscale` CLI. Build locally on a Debian-based host with:
+
+```sh
+TAILSCOUT_SKIP_BUILD=1 scripts/package-deb.sh 0.1.4 dist
+```
+
+## Snap
+
+`snap/snapcraft.yaml` derives its version from `Cargo.toml` and builds the same
+native binary and desktop metadata. The release workflow attaches
+`tailscout_<version>_amd64.snap` beside the Debian artifact. TailScout uses
+classic confinement because it must invoke the user's Tailscale CLI and LocalAPI
+on the host; Canonical review and a maintainer smoke test are required before a
+Snap Store release is advertised.
+
+```sh
+snapcraft --destructive-mode
+snap install --dangerous ./tailscout_0.1.4_amd64.snap
+```
+
+Flatpak and strict Snap still need an explicit host-daemon/CLI integration design.
+Keep those channels as follow-up work until the portals, permissions, and runtime
+behavior are tested on a real Linux desktop.

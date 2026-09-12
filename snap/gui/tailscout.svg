@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="TailScout">
+  <rect width="128" height="128" rx="24" fill="#243447"/>
+  <path d="M25 39h78v13H25zM25 62h52v13H25zM25 85h32v13H25z" fill="#69d2e7"/>
+  <circle cx="91" cy="81" r="18" fill="#f5a623"/>
+  <path d="M87 73h8v16h-8z" fill="#243447"/>
+  <circle cx="91" cy="94" r="3" fill="#243447"/>
+</svg>

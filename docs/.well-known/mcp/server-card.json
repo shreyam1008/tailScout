@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "2026-06-11",
+  "serverInfo": {
+    "name": "tailscout-local",
+    "title": "TailScout local Tailscale client",
+    "version": "0.1.4",
+    "description": "Native Rust GTK4/libadwaita desktop client that reads and operates the user's Tailscale CLI/LocalAPI. The public site does not expose a network MCP transport."
+  },
+  "publisher": { "name": "Shreyam Adhikari", "url": "https://shreyam1008.com.np/" },
+  "transports": [],
+  "capabilities": {
+    "resources": [
+      { "name": "llms.txt", "uri": "https://tailscout.shreyam1008.com.np/llms.txt", "mimeType": "text/markdown" },
+      { "name": "native platform notes", "uri": "https://tailscout.shreyam1008.com.np/native-platforms.md", "mimeType": "text/markdown" }
+    ],
+    "tools": [],
+    "localOnly": true,
+    "privateData": "tailnet status, peers, accounts, and device details are never published by this site"
+  },
+  "documentation": "https://tailscout.shreyam1008.com.np/llms.txt"
+}

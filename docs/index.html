@@ -18,6 +18,10 @@
   <link rel="canonical" href="https://tailscout.shreyam1008.com.np/">
   <link rel="manifest" href="site.webmanifest">
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="api-catalog" href=".well-known/api-catalog" type="application/linkset+json">
+  <link rel="service-desc" href="openapi.json" type="application/openapi+json">
+  <link rel="service-doc" href="llms.txt" type="text/markdown">
+  <link rel="ai-catalog" href=".well-known/ai-catalog.json" type="application/json">
   <link rel="preload" href="assets/app.js" as="script">
   <meta property="og:site_name" content="TailScout">
   <meta property="og:title" content="TailScout — Native Tailscale GUI for Linux">
@@ -104,8 +108,8 @@
         <div class="overflow-hidden rounded-[1.45rem] border border-slate-200 bg-slate-100">
           <div class="flex h-12 items-center justify-between border-b border-slate-200 bg-white px-4"><div class="flex gap-2"><i class="h-3 w-3 rounded-full bg-slate-300"></i><i class="h-3 w-3 rounded-full bg-slate-300"></i><i class="h-3 w-3 rounded-full bg-slate-300"></i></div><b class="text-sm">TailScout</b><span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-black text-emerald-700">Connected</span></div>
           <div class="grid min-h-[420px] gap-4 p-4 sm:grid-cols-[.88fr_1.12fr]">
-            <div class="rounded-3xl border border-slate-200 bg-white p-4"><h2 class="font-black">Overview</h2><p class="mt-1 text-sm text-slate-500">tail9e520a.ts.net</p><div class="mt-5 space-y-3 text-sm"><p class="flex justify-between rounded-2xl bg-slate-50 p-3"><span>Owner</span><b>Shreyam</b></p><p class="flex justify-between rounded-2xl bg-slate-50 p-3"><span>Health</span><b>OK</b></p><p class="flex justify-between rounded-2xl bg-slate-50 p-3"><span>Version</span><b>1.98.4</b></p></div></div>
-            <div class="rounded-3xl border border-slate-200 bg-white p-4"><h2 class="font-black">Devices</h2><div class="mt-4 divide-y divide-slate-100"><div class="flex items-center justify-between py-4"><div><b>work-desktop</b><p class="text-sm text-slate-500">Windows · 100.100.8.30</p></div><span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-black text-emerald-700">Online</span></div><div class="flex items-center justify-between py-4"><div><b>linux-workstation</b><p class="text-sm text-slate-500">Linux · exit node</p></div><span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">Exit</span></div><div class="flex items-center justify-between py-4"><div><b>phone</b><p class="text-sm text-slate-500">Android · offline</p></div><span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-500">Offline</span></div></div></div>
+          <div class="rounded-3xl border border-slate-200 bg-white p-4"><h2 class="font-black">Overview</h2><p class="mt-1 text-sm text-slate-500">example.ts.net</p><div class="mt-5 space-y-3 text-sm"><p class="flex justify-between rounded-2xl bg-slate-50 p-3"><span>Owner</span><b>Your tailnet</b></p><p class="flex justify-between rounded-2xl bg-slate-50 p-3"><span>Health</span><b>OK</b></p><p class="flex justify-between rounded-2xl bg-slate-50 p-3"><span>Version</span><b>1.98.4</b></p></div></div>
+            <div class="rounded-3xl border border-slate-200 bg-white p-4"><h2 class="font-black">Devices</h2><div class="mt-4 divide-y divide-slate-100"><div class="flex items-center justify-between py-4"><div><b>example-desktop</b><p class="text-sm text-slate-500">Windows · 100.64.0.10</p></div><span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-black text-emerald-700">Online</span></div><div class="flex items-center justify-between py-4"><div><b>linux-workstation</b><p class="text-sm text-slate-500">Linux · exit node</p></div><span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">Exit</span></div><div class="flex items-center justify-between py-4"><div><b>phone</b><p class="text-sm text-slate-500">Android · offline</p></div><span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-500">Offline</span></div></div></div>
           </div>
         </div>
       </section>
@@ -181,5 +185,6 @@
 
   <noscript><p class="p-4 text-center text-sm text-slate-600">TailScout's landing page works without JavaScript; scroll animations and copy feedback are disabled.</p></noscript>
   <script src="assets/app.js" defer></script>
+  <script src="webmcp.js" defer></script>
 </body>
 </html>

@@ -1,0 +1,30 @@
+{
+  "specVersion": "1.0",
+  "host": { "displayName": "TailScout", "identifier": "https://tailscout.shreyam1008.com.np/" },
+  "entries": [
+    {
+      "identifier": "urn:air:tailscout.shreyam1008.com.np:skill:tailscout-docs",
+      "displayName": "TailScout documentation skill",
+      "type": "application/ai-skill",
+      "url": "https://tailscout.shreyam1008.com.np/.well-known/agent-skills/tailscout-docs.md",
+      "description": "Public product, installation, platform, and local-data boundary guidance for TailScout.",
+      "representativeQueries": ["what is TailScout", "install TailScout on Linux", "does TailScout expose my tailnet data"]
+    },
+    {
+      "identifier": "urn:air:tailscout.shreyam1008.com.np:api:public-discovery",
+      "displayName": "TailScout public documentation resources",
+      "type": "application/openapi+json",
+      "url": "https://tailscout.shreyam1008.com.np/openapi.json",
+      "description": "OpenAPI description for public docs and discovery files; it does not expose a Tailscale API.",
+      "representativeQueries": ["find TailScout's machine-readable resources", "read TailScout platform notes"]
+    },
+    {
+      "identifier": "urn:air:tailscout.shreyam1008.com.np:mcp:local-card",
+      "displayName": "TailScout local integration card",
+      "type": "application/mcp-server-card+json",
+      "url": "https://tailscout.shreyam1008.com.np/.well-known/mcp/server-card.json",
+      "description": "Static card describing the native client's local CLI/LocalAPI boundary; no public MCP endpoint is advertised.",
+      "representativeQueries": ["connect an agent to TailScout locally", "does TailScout have a remote MCP server"]
+    }
+  ]
+}

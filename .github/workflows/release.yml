@@ -183,7 +183,8 @@ jobs:
             build-essential \
             pkg-config \
             libgtk-4-dev \
-            libadwaita-1-dev
+            libadwaita-1-dev \
+            dpkg-dev
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -194,6 +195,18 @@ jobs:
       - name: Package Linux release
         run: scripts/package-release.sh
 
+      - name: Build Debian package
+        run: scripts/package-deb.sh "${GITHUB_REF_NAME#v}"
+
+      - name: Build classic Snap candidate
+        id: snapcraft
+        uses: snapcore/action-build@v1
+        with:
+          snapcraft-args: --destructive-mode
+
+      - name: Name Snap artifact
+        run: cp "${{ steps.snapcraft.outputs.snap }}" "dist/tailscout_${GITHUB_REF_NAME#v}_amd64.snap"
+
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -201,6 +214,8 @@ jobs:
           path: |
             dist/tailscout-linux-x86_64.tar.gz
             dist/tailscout-v*-linux-x86_64.tar.gz
+            dist/tailscout_*_amd64.deb
+            dist/tailscout_*_amd64.snap
 
   package-windows:
     name: Package Windows
@@ -296,6 +311,8 @@ jobs:
           files: |
             dist/tailscout-linux-x86_64.tar.gz
             dist/tailscout-v*-linux-x86_64.tar.gz
+            dist/tailscout_*_amd64.deb
+            dist/tailscout_*_amd64.snap
             dist/tailscout-v*-windows-x64-winui.zip
             dist/tailscout-v*-macos-universal.zip
             dist/SHA256SUMS

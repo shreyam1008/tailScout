@@ -1,0 +1,15 @@
+{
+  "$schema": "https://agentskills.io/schemas/agent-skills-discovery-0.2.0.json",
+  "name": "TailScout agent skills",
+  "description": "Public agent-readable documentation for the native TailScout client.",
+  "publisher": { "name": "Shreyam Adhikari", "url": "https://shreyam1008.com.np/" },
+  "skills": [
+    {
+      "name": "tailscout-docs",
+      "type": "documentation",
+      "description": "Read TailScout product, installation, platform, and local-data boundary documentation.",
+      "url": "https://tailscout.shreyam1008.com.np/.well-known/agent-skills/tailscout-docs.md",
+      "sha256": "2b826c5166eb4af6a7bb16a759b5d61bb080b7d20808293cd1205ace5091023f"
+    }
+  ]
+}

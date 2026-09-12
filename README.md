@@ -56,6 +56,16 @@ It uses `sudo` only if those system directories are not writable or if GTK4/liba
 runtime packages are missing. TailScout still needs Tailscale itself installed and
 running.
 
+For Debian or Ubuntu, the same release also includes a versioned `.deb` package:
+
+```bash
+sudo apt install ./tailscout_<version>_amd64.deb
+```
+
+The release workflow builds a classic Snap candidate as well. Classic confinement
+is required for the native Tailscale CLI and LocalAPI; the artifact must pass a
+maintainer smoke test and Canonical review before Store publication.
+
 ## Features (v0.1)
 
 - See your tailnet devices with online status, OS, and Tailscale IP
@@ -145,10 +155,9 @@ scripts/tag-release.sh
 ```
 
 That creates and pushes a tag like `vX.Y.Z`. GitHub Actions then builds the optimized
-Linux, Windows, and macOS assets, publishes a GitHub Release, and uploads checksums.
-
-Package-manager installs (`.deb`, RPM, AUR, Flatpak, distro repos, app stores) are
-planned later. For now the supported install path is the GitHub Release installer above.
+Linux, Windows, and macOS assets, the Debian package, a classic Snap candidate,
+publishes a GitHub Release, and uploads checksums. Flatpak and strict Snap remain
+follow-up channels until their host-daemon integration is tested.
 
 ## Native Windows and macOS clients
 

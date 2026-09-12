@@ -1,0 +1,16 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "TailScout public documentation resources",
+    "version": "0.1.4",
+    "description": "Read-only documentation and discovery resources for TailScout. The native client runs locally and talks to the user's Tailscale CLI/LocalAPI; this site does not expose tailnet data or a hosted API."
+  },
+  "servers": [{ "url": "https://tailscout.shreyam1008.com.np" }],
+  "paths": {
+    "/llms.txt": { "get": { "operationId": "getLlmsIndex", "summary": "Get the agent-readable TailScout guide", "responses": { "200": { "description": "Markdown guide", "content": { "text/markdown": { "schema": { "type": "string" } } } } } } },
+    "/native-platforms.md": { "get": { "operationId": "getNativePlatforms", "summary": "Get platform and Tailscale integration notes", "responses": { "200": { "description": "Markdown platform notes", "content": { "text/markdown": { "schema": { "type": "string" } } } } } } },
+    "/runtime-footprint.md": { "get": { "operationId": "getRuntimeFootprint", "summary": "Get runtime footprint documentation", "responses": { "200": { "description": "Markdown runtime notes", "content": { "text/markdown": { "schema": { "type": "string" } } } } } } },
+    "/.well-known/agent-skills/index.json": { "get": { "operationId": "getAgentSkills", "summary": "Get the TailScout Agent Skills index", "responses": { "200": { "description": "Agent Skills index", "content": { "application/json": { "schema": { "type": "object" } } } } } } },
+    "/.well-known/mcp/server-card.json": { "get": { "operationId": "getMcpServerCard", "summary": "Get TailScout's local integration card", "responses": { "200": { "description": "MCP discovery card", "content": { "application/json": { "schema": { "type": "object" } } } } } } }
+  }
+}
