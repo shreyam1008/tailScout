@@ -1,0 +1,74 @@
+name: Build and attach Debian package
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_ref:
+        description: Git ref containing the Debian packaging
+        required: true
+        default: main
+      release_tag:
+        description: Existing GitHub release tag to receive the artifact
+        required: true
+        default: v0.1.4
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tailscout-deb
+  cancel-in-progress: false
+
+jobs:
+  deb:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Check out packaging source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_ref }}
+          fetch-depth: 0
+
+      - name: Install Linux build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            pkg-config \
+            libgtk-4-dev \
+            libadwaita-1-dev \
+            dpkg-dev
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build Debian package
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          set -euo pipefail
+          [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          scripts/package-deb.sh "${RELEASE_TAG#v}"
+
+      - name: Attach Debian package and checksum
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          set -euo pipefail
+          version="${RELEASE_TAG#v}"
+          asset="dist/tailscout_${version}_amd64.deb"
+          test -s "$asset"
+          sha256sum "$asset" | sed 's#dist/##' > "${asset}.sha256"
+          gh release upload "$RELEASE_TAG" "$asset" "${asset}.sha256" \
+            --repo "$GITHUB_REPOSITORY" --clobber
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tailscout-deb
+          path: |
+            dist/tailscout_*_amd64.deb
+            dist/tailscout_*_amd64.deb.sha256
+          if-no-files-found: error
