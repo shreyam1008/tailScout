@@ -201,8 +201,6 @@ jobs:
       - name: Build classic Snap candidate
         id: snapcraft
         uses: snapcore/action-build@v1
-        with:
-          snapcraft-args: --destructive-mode
 
       - name: Name Snap artifact
         run: cp "${{ steps.snapcraft.outputs.snap }}" "dist/tailscout_${GITHUB_REF_NAME#v}_amd64.snap"
