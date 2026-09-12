@@ -52,8 +52,8 @@ fn peers_sorted_online_first() {
     );
     assert!(sorted[0].online);
     assert!(!sorted[2].online);
-    assert!(sorted[1].exit_node_option);
-    assert!(sorted[1].can_receive_taildrop());
+    assert!(sorted[0].exit_node_option);
+    assert!(sorted[0].can_receive_taildrop());
     assert!(sorted[2].is_subnet_router());
 }
 
