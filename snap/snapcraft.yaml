@@ -37,7 +37,6 @@ parts:
 apps:
   tailscout:
     command: bin/tailscout
-    desktop: tailscout.desktop
     plugs:
       - network
       - home
