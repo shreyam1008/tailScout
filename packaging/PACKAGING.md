@@ -29,6 +29,10 @@ distribution GTK4/libadwaita runtime and suggests the separately installed
 TAILSCOUT_SKIP_BUILD=1 scripts/package-deb.sh 0.1.4 dist
 ```
 
+The v0.1.4 package is attached to the [GitHub release](https://github.com/shreyam1008/tailScout/releases/tag/v0.1.4) with its
+[SHA-256 receipt](https://github.com/shreyam1008/tailScout/releases/download/v0.1.4/tailscout_0.1.4_amd64.deb.sha256).
+The artifact was backfilled by the hosted [Debian workflow run](https://github.com/shreyam1008/tailScout/actions/runs/34678900557).
+
 ## Snap
 
 `snap/snapcraft.yaml` derives its version from `Cargo.toml` and builds the same
