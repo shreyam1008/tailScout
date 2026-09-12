@@ -10,6 +10,9 @@ backend wraps the `tailscale` CLI and LocalAPI, which evolve over time.
 
 ## [Unreleased]
 
+- Clarify website downloads: default GitHub installer, Debian package, platform previews, and Snap/Flatpak availability.
+- Invoke the Debian packager with Bash in tagged releases, matching the verified backfill workflow.
+
 ## [0.1.4] - 2026-09-11
 
 ### Fixed

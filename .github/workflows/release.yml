@@ -196,7 +196,7 @@ jobs:
         run: scripts/package-release.sh
 
       - name: Build Debian package
-        run: scripts/package-deb.sh "${GITHUB_REF_NAME#v}"
+        run: bash scripts/package-deb.sh "${GITHUB_REF_NAME#v}"
 
       - name: Build classic Snap candidate
         id: snapcraft
