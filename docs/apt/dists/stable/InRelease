@@ -1,0 +1,31 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
+
+Origin: tailscout
+Label: tailscout
+Suite: stable
+Codename: stable
+Architectures: amd64
+Components: main
+Description: APT repository for tailscout
+Date: Sat, 12 Sep 2026 09:10:53 +0000
+MD5Sum:
+ b71f2c8281264362629c2d0bdc6a0a95              657 main/binary-amd64/Packages
+ 3c70dac384341168c9bd672ce8b709be              469 main/binary-amd64/Packages.gz
+SHA256:
+ 7be9839565f173da7217365af4c722b9b9c9bcb092620e164c53f46ea015dee3              657 main/binary-amd64/Packages
+ e4798157f3cab85480d33bdb338e68b78e555a4d6b23509948f01a69938634bd              469 main/binary-amd64/Packages.gz
+-----BEGIN PGP SIGNATURE-----
+
+iQGzBAEBCAAdFiEE5RpIZHurdJ/P2eFZZ3/PvRyNYMgFAmqlFx0ACgkQZ3/PvRyN
+YMhofAv/RcYOM2dslJkCD84/Znz37XEB3v56Gu0jkhxF0PGywRKQBSLayKnVS1D7
+VDKyIwGuH6IVgp1n0sGhCd3GuKkKa4UAAOecRggvwk1gaiWEt0GUbHML4wTQKZgi
+vesy/eh4ME1INUC10ViYNnEdIPej/n4SVdXPwuq/s03jVGbE+HZpqFOTajp3g+PD
+8haDf3kWcn6EJNFmxv8Wm1Dx1pF4jjj5LSFNCc3EWsXvTjJRR6Y1J6jM0tbqlGDz
+xcAI0x8d1O4DksFnrMP3ShZ9pZLS760GJbOV2fU26J2bI9CJd6vn10GMUGZ24+L6
+XZxh7YLRWEYgkbd4LPXGiI8keYtjgdIkVUKpPUrJUxyYGJZd0yIYpb4GHmqzskRy
+vKaSDfgxm8MLH9rVZAe/1OutH1uml/x2nYpHecosJJKHZCOG51GbWqVSyjD9wEvt
+CQEk2W1i6ODAeZQNB32k9AlitRWjUVRWiaUVnpi70qc53iO2+7Y9JpLtzWPiS7T0
+0PnVqtrv
+=2agS
+-----END PGP SIGNATURE-----

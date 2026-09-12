@@ -1,0 +1,18 @@
+Package: tailscout
+Version: 0.1.4
+Architecture: amd64
+Maintainer: Shreyam Adhikari <shreyam1008@gmail.com>
+Depends: libgtk-4-1, libadwaita-1-0
+Suggests: tailscale
+Filename: pool/main/t/tailscout/tailscout_0.1.4_amd64.deb
+Size: 286576
+MD5sum: d9127ba3355b714ed1acb21c368eeaf3
+SHA1: 4040c94309a0e9fc4bf20a1fb60836b94b35a7e2
+SHA256: f213e542c4c21bbcf324a70e1ee7a207ba943afae911b18ce58e88d63c919a54
+Section: net
+Priority: optional
+Homepage: https://tailscout.shreyam1008.com.np/
+Description: Native Tailscale GUI for Linux
+ TailScout is a lightweight GTK4/libadwaita desktop client for the
+ Tailscale CLI and LocalAPI. Tailnet data stays on the local machine.
+

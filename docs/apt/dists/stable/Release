@@ -1,0 +1,14 @@
+Origin: tailscout
+Label: tailscout
+Suite: stable
+Codename: stable
+Architectures: amd64
+Components: main
+Description: APT repository for tailscout
+Date: Sat, 12 Sep 2026 09:10:53 +0000
+MD5Sum:
+ b71f2c8281264362629c2d0bdc6a0a95              657 main/binary-amd64/Packages
+ 3c70dac384341168c9bd672ce8b709be              469 main/binary-amd64/Packages.gz
+SHA256:
+ 7be9839565f173da7217365af4c722b9b9c9bcb092620e164c53f46ea015dee3              657 main/binary-amd64/Packages
+ e4798157f3cab85480d33bdb338e68b78e555a4d6b23509948f01a69938634bd              469 main/binary-amd64/Packages.gz
