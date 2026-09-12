@@ -1,5 +1,11 @@
 # TailScout
 
+Distribution checked 12 September 2026: GitHub platform archives and the Debian
+package are live. A signed APT repository, Snap Store and Flatpak are not yet
+available; the release includes a Snap candidate. The Microsoft Store package is
+validated but not submitted; genuine sanitized Windows screenshots and acceptance
+remain. See the [shared publication status](https://shreyam1008.com.np/projects/#distribution-tailscout).
+
 A clean, **native desktop GUI for Tailscale**. Linux uses Rust with GTK4 +
 libadwaita; current-source native WinUI 3 and SwiftUI previews live beside it.
 
