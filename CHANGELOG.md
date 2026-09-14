@@ -10,6 +10,8 @@ backend wraps the `tailscale` CLI and LocalAPI, which evolve over time.
 
 ## [Unreleased]
 
+- Add a square PNG website favicon and explicit TailScout site-name fallback for search.
+
 - Clarify website downloads: default GitHub installer, Debian package, platform previews, and Snap/Flatpak availability.
 - Invoke the Debian packager with Bash in tagged releases, matching the verified backfill workflow.
 
